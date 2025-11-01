@@ -1,7 +1,9 @@
 import type { Express } from "express";
+import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
-export function registerRoutes(app: Express) {
+export function registerRoutes(app: Express): Server {
+  const httpServer = createServer(app);
   // Quran Verses API
   app.get("/api/quran/verses", async (req, res) => {
     try {
@@ -78,4 +80,6 @@ export function registerRoutes(app: Express) {
       res.status(500).json({ error: "Failed to fetch book pages" });
     }
   });
+
+  return httpServer;
 }

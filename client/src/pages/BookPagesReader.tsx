@@ -1,32 +1,38 @@
 import { ArrowLeft } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import PageCard from "@/components/PageCard";
-
-// Mock book pages data - in a real app this would come from API
-const mockBookPages = [
-  {
-    id: "1",
-    pageNumber: 1,
-    bookTitle: "Tafseer Ibn Kathir",
-    content: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\n\nالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَىٰ أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، نَبِيِّنَا مُحَمَّدٍ وَعَلَىٰ آلِهِ وَصَحْبِهِ أَجْمَعِينَ.\n\nهذا كتاب عظيم في التفسير، يشرح معاني القرآن الكريم بأسلوب واضح ومفصل. إن فهم كلام الله تعالى هو من أعظم العلوم وأشرفها، وقد بذل العلماء جهودًا كبيرة في تفسير آيات الكتاب الحكيم."
-  },
-  {
-    id: "2",
-    pageNumber: 2,
-    bookTitle: "Tafseer Ibn Kathir",
-    content: "في هذا الباب، نتناول أصول التفسير وقواعده، ونبين كيف يفهم المسلم كتاب ربه بالطريقة الصحيحة. إن القرآن الكريم هو دستور المسلمين ومنهج حياتهم، وفيه الهداية والنور.\n\nومن أهم قواعد التفسير:\n١. الرجوع إلى تفسير القرآن بالقرآن\n٢. الرجوع إلى السنة النبوية\n٣. الرجوع إلى أقوال الصحابة والتابعين"
-  },
-  {
-    id: "3",
-    pageNumber: 3,
-    bookTitle: "Tafseer Ibn Kathir",
-    content: "وَمِنَ الْمُهِمِّ أَنْ نَفْهَمَ السِّيَاقَ الَّذِي نَزَلَتْ فِيهِ الْآيَاتُ، فَإِنَّ لِكُلِّ آيَةٍ سَبَبَ نُزُولٍ وَظُرُوفًا خَاصَّةً.\n\nكَمَا يَجِبُ عَلَى الْمُفَسِّرِ أَنْ يَكُونَ عَلِيمًا بِاللُّغَةِ الْعَرَبِيَّةِ وَأَسَالِيبِهَا وَبَلَاغَتِهَا، لِأَنَّ الْقُرْآنَ نَزَلَ بِلِسَانٍ عَرَبِيٍّ مُبِينٍ."
-  }
-];
+import { useQuery } from "@tanstack/react-query";
+import type { Book, BookPage } from "@shared/schema";
 
 export default function BookPagesReader() {
   const { bookId } = useParams();
   const [, setLocation] = useLocation();
+
+  const { data: book, isLoading: bookLoading } = useQuery<Book>({
+    queryKey: [`/api/books/${bookId}`],
+    enabled: !!bookId,
+  });
+
+  const { data: pages, isLoading: pagesLoading } = useQuery<BookPage[]>({
+    queryKey: [`/api/books/${bookId}/pages`],
+    enabled: !!bookId,
+  });
+
+  if (bookLoading || pagesLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Loading book pages...</div>
+      </div>
+    );
+  }
+
+  if (!book) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Book not found</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background lg:pb-0 pb-[70px]">
@@ -40,21 +46,27 @@ export default function BookPagesReader() {
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-foreground">Tafseer Ibn Kathir</h1>
-            <p className="text-sm text-muted-foreground">By Imam Ibn Kathir</p>
+            <h1 className="text-xl font-semibold text-foreground">{book.title}</h1>
+            <p className="text-sm text-muted-foreground">By {book.author}</p>
           </div>
         </div>
       </div>
       
       <div className="px-4 py-6 space-y-4 max-w-4xl mx-auto">
-        {mockBookPages.map((page) => (
-          <PageCard
-            key={page.id}
-            pageNumber={page.pageNumber}
-            content={page.content}
-            bookTitle={page.bookTitle}
-          />
-        ))}
+        {pages && pages.length > 0 ? (
+          pages.map((page) => (
+            <PageCard
+              key={page.id}
+              pageNumber={page.pageNumber}
+              content={page.content}
+              bookTitle={book.title}
+            />
+          ))
+        ) : (
+          <div className="text-center text-muted-foreground py-12">
+            No pages available for this book
+          </div>
+        )}
       </div>
     </div>
   );

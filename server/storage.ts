@@ -38,7 +38,58 @@ export class MemStorage implements IStorage {
     this.initializeMockData();
   }
 
-  private initializeMockData() {
+  private async initializeMockData() {
+    // Mock Books
+    const book1 = await this.createBook({
+      title: "Tafseer Ibn Kathir",
+      author: "Imam Ibn Kathir",
+      category: "Tafseer",
+      totalPages: 10,
+      description: "Comprehensive Quranic exegesis",
+      language: "Arabic/English"
+    });
+
+    const book2 = await this.createBook({
+      title: "Riyadh as-Salihin",
+      author: "Imam Nawawi",
+      category: "Hadith Collection",
+      totalPages: 8,
+      description: "Gardens of the Righteous",
+      language: "Arabic/English"
+    });
+
+    // Mock Book Pages for Tafseer Ibn Kathir
+    await this.createBookPage({
+      bookId: book1.id,
+      pageNumber: 1,
+      content: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\n\nالْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، وَالصَّلَاةُ وَالسَّلَامُ عَلَىٰ أَشْرَفِ الْأَنْبِيَاءِ وَالْمُرْسَلِينَ، نَبِيِّنَا مُحَمَّدٍ وَعَلَىٰ آلِهِ وَصَحْبِهِ أَجْمَعِينَ.\n\nهذا كتاب عظيم في التفسير، يشرح معاني القرآن الكريم بأسلوب واضح ومفصل. إن فهم كلام الله تعالى هو من أعظم العلوم وأشرفها، وقد بذل العلماء جهودًا كبيرة في تفسير آيات الكتاب الحكيم."
+    });
+
+    await this.createBookPage({
+      bookId: book1.id,
+      pageNumber: 2,
+      content: "في هذا الباب، نتناول أصول التفسير وقواعده، ونبين كيف يفهم المسلم كتاب ربه بالطريقة الصحيحة. إن القرآن الكريم هو دستور المسلمين ومنهج حياتهم، وفيه الهداية والنور.\n\nومن أهم قواعد التفسير:\n١. الرجوع إلى تفسير القرآن بالقرآن\n٢. الرجوع إلى السنة النبوية\n٣. الرجوع إلى أقوال الصحابة والتابعين"
+    });
+
+    await this.createBookPage({
+      bookId: book1.id,
+      pageNumber: 3,
+      content: "وَمِنَ الْمُهِمِّ أَنْ نَفْهَمَ السِّيَاقَ الَّذِي نَزَلَتْ فِيهِ الْآيَاتُ، فَإِنَّ لِكُلِّ آيَةٍ سَبَبَ نُزُولٍ وَظُرُوفًا خَاصَّةً.\n\nكَمَا يَجِبُ عَلَى الْمُفَسِّرِ أَنْ يَكُونَ عَلِيمًا بِاللُّغَةِ الْعَرَبِيَّةِ وَأَسَالِيبِهَا وَبَلَاغَتِهَا، لِأَنَّ الْقُرْآنَ نَزَلَ بِلِسَانٍ عَرَبِيٍّ مُبِينٍ."
+    });
+
+    // Mock Book Pages for Riyadh as-Salihin
+    await this.createBookPage({
+      bookId: book2.id,
+      pageNumber: 1,
+      content: "كتاب رياض الصالحين\n\nمن كلام سيد المرسلين صلى الله عليه وسلم\n\nبسم الله الرحمن الرحيم\n\nالحمد لله الواحد القهار، العزيز الغفار، مكور الليل على النهار، تذكرة لأولي القلوب والأبصار."
+    });
+
+    await this.createBookPage({
+      bookId: book2.id,
+      pageNumber: 2,
+      content: "باب الإخلاص وإحضار النية في جميع الأعمال\n\nقال الله تعالى: {وَمَا أُمِرُوا إِلَّا لِيَعْبُدُوا اللَّهَ مُخْلِصِينَ لَهُ الدِّينَ}\n\nوعن أمير المؤمنين أبي حفص عمر بن الخطاب رضي الله عنه قال: سمعت رسول الله صلى الله عليه وسلم يقول: إنما الأعمال بالنيات."
+    });
+
     // Mock Quran Verses (Surah Al-Fatiha)
     const fatihaVerses: InsertQuranVerse[] = [
       {
@@ -130,28 +181,6 @@ export class MemStorage implements IStorage {
     ];
 
     mockHadiths.forEach(hadith => this.createHadith(hadith));
-
-    // Mock Books
-    const mockBooks: InsertBook[] = [
-      {
-        title: "Tafseer Ibn Kathir",
-        author: "Imam Ibn Kathir",
-        category: "Tafseer",
-        totalPages: 10,
-        description: "Comprehensive Quranic exegesis",
-        language: "Arabic/English"
-      },
-      {
-        title: "Riyadh as-Salihin",
-        author: "Imam Nawawi",
-        category: "Hadith Collection",
-        totalPages: 8,
-        description: "Gardens of the Righteous",
-        language: "Arabic/English"
-      }
-    ];
-
-    mockBooks.forEach(book => this.createBook(book));
   }
 
   async getBooks(): Promise<Book[]> {
