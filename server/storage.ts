@@ -6,6 +6,18 @@ import {
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
+export interface SurahInfo {
+  surahNumber: number;
+  surahName: string;
+  totalVerses: number;
+  arabicName: string;
+}
+
+export interface HadithBookInfo {
+  bookName: string;
+  totalHadiths: number;
+}
+
 export interface IStorage {
   getBooks(): Promise<Book[]>;
   getBook(id: string): Promise<Book | undefined>;
@@ -18,10 +30,12 @@ export interface IStorage {
   getQuranVerses(surahNumber?: number): Promise<QuranVerse[]>;
   getQuranVerse(id: string): Promise<QuranVerse | undefined>;
   createQuranVerse(verse: InsertQuranVerse): Promise<QuranVerse>;
+  getSurahs(): Promise<SurahInfo[]>;
   
   getHadiths(book?: string): Promise<Hadith[]>;
   getHadith(id: string): Promise<Hadith | undefined>;
   createHadith(hadith: InsertHadith): Promise<Hadith>;
+  getHadithBooks(): Promise<HadithBookInfo[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -268,6 +282,51 @@ export class MemStorage implements IStorage {
     };
     this.hadiths.set(id, hadith);
     return hadith;
+  }
+
+  async getSurahs(): Promise<SurahInfo[]> {
+    const verses = Array.from(this.quranVerses.values());
+    const surahMap = new Map<number, SurahInfo>();
+    
+    verses.forEach(verse => {
+      if (!surahMap.has(verse.surahNumber)) {
+        surahMap.set(verse.surahNumber, {
+          surahNumber: verse.surahNumber,
+          surahName: verse.surahName,
+          totalVerses: 0,
+          arabicName: this.getSurahArabicName(verse.surahNumber, verse.surahName)
+        });
+      }
+      const surah = surahMap.get(verse.surahNumber)!;
+      surah.totalVerses++;
+    });
+    
+    return Array.from(surahMap.values()).sort((a, b) => a.surahNumber - b.surahNumber);
+  }
+
+  async getHadithBooks(): Promise<HadithBookInfo[]> {
+    const hadiths = Array.from(this.hadiths.values());
+    const bookMap = new Map<string, HadithBookInfo>();
+    
+    hadiths.forEach(hadith => {
+      if (!bookMap.has(hadith.book)) {
+        bookMap.set(hadith.book, {
+          bookName: hadith.book,
+          totalHadiths: 0
+        });
+      }
+      const book = bookMap.get(hadith.book)!;
+      book.totalHadiths++;
+    });
+    
+    return Array.from(bookMap.values());
+  }
+
+  private getSurahArabicName(surahNumber: number, surahName: string): string {
+    const arabicNames: Record<string, string> = {
+      "Al-Fatiha": "الفاتحة"
+    };
+    return arabicNames[surahName] || "";
   }
 }
 

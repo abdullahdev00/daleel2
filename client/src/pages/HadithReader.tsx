@@ -1,14 +1,44 @@
+import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
-import { useLocation } from "wouter";
+import { useLocation, useParams } from "wouter";
 import HadithCard from "@/components/HadithCard";
 import { useQuery } from "@tanstack/react-query";
 import type { Hadith } from "@shared/schema";
 
 export default function HadithReader() {
   const [, setLocation] = useLocation();
+  const params = useParams<{ bookId: string }>();
+  
+  let bookName = "";
+  let isInvalid = false;
+  
+  try {
+    if (!params?.bookId) {
+      isInvalid = true;
+    } else {
+      bookName = decodeURIComponent(params.bookId);
+    }
+  } catch {
+    isInvalid = true;
+  }
+  
+  useEffect(() => {
+    if (isInvalid) {
+      setLocation("/library/hadith");
+    }
+  }, [isInvalid, setLocation]);
+  
+  if (isInvalid) {
+    return null;
+  }
 
   const { data: hadiths, isLoading } = useQuery<Hadith[]>({
-    queryKey: ["/api/hadiths"],
+    queryKey: ["/api/hadiths", bookName],
+    queryFn: async () => {
+      const res = await fetch(`/api/hadiths?book=${encodeURIComponent(bookName)}`);
+      if (!res.ok) throw new Error("Failed to fetch hadiths");
+      return res.json();
+    },
   });
 
   if (isLoading) {
@@ -24,14 +54,14 @@ export default function HadithReader() {
       <div className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="px-4 py-4 flex items-center gap-3">
           <button
-            onClick={() => setLocation("/library")}
+            onClick={() => setLocation("/library/hadith")}
             className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
             data-testid="button-back"
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-foreground">Sahih Bukhari</h1>
+            <h1 className="text-xl font-semibold text-foreground">{bookName}</h1>
             <p className="text-sm text-muted-foreground">Authentic Hadiths</p>
           </div>
         </div>

@@ -4,6 +4,17 @@ import { storage } from "./storage";
 
 export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
+  
+  // Quran Surahs List API
+  app.get("/api/quran/surahs", async (req, res) => {
+    try {
+      const surahs = await storage.getSurahs();
+      res.json(surahs);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch surahs" });
+    }
+  });
+
   // Quran Verses API
   app.get("/api/quran/verses", async (req, res) => {
     try {
@@ -24,6 +35,16 @@ export function registerRoutes(app: Express): Server {
       res.json(verse);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch verse" });
+    }
+  });
+
+  // Hadith Books List API
+  app.get("/api/hadith/books", async (req, res) => {
+    try {
+      const books = await storage.getHadithBooks();
+      res.json(books);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch hadith books" });
     }
   });
 

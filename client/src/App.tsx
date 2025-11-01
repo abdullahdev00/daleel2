@@ -9,7 +9,9 @@ import { AppSidebar } from "@/components/AppSidebar";
 import BottomNavigation from "@/components/BottomNavigation";
 import Home from "@/pages/Home";
 import Library from "@/pages/Library";
+import QuranSurahList from "@/pages/QuranSurahList";
 import QuranReader from "@/pages/QuranReader";
+import HadithBooksList from "@/pages/HadithBooksList";
 import HadithReader from "@/pages/HadithReader";
 import BooksLibrary from "@/pages/BooksLibrary";
 import BookPagesReader from "@/pages/BookPagesReader";
@@ -21,8 +23,10 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/library" component={Library} />
-      <Route path="/library/quran" component={QuranReader} />
-      <Route path="/library/hadith" component={HadithReader} />
+      <Route path="/library/quran" component={QuranSurahList} />
+      <Route path="/library/quran/:surahId" component={QuranReader} />
+      <Route path="/library/hadith" component={HadithBooksList} />
+      <Route path="/library/hadith/:bookId" component={HadithReader} />
       <Route path="/library/books" component={BooksLibrary} />
       <Route path="/library/books/:bookId" component={BookPagesReader} />
       <Route path="/settings" component={Settings} />

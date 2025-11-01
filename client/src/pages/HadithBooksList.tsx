@@ -2,19 +2,23 @@ import { ArrowLeft } from "lucide-react";
 import { useLocation } from "wouter";
 import ListCard from "@/components/ListCard";
 import { useQuery } from "@tanstack/react-query";
-import type { Book } from "@shared/schema";
 
-export default function BooksLibrary() {
+interface HadithBookInfo {
+  bookName: string;
+  totalHadiths: number;
+}
+
+export default function HadithBooksList() {
   const [, setLocation] = useLocation();
 
-  const { data: books, isLoading } = useQuery<Book[]>({
-    queryKey: ["/api/books"],
+  const { data: books, isLoading } = useQuery<HadithBookInfo[]>({
+    queryKey: ["/api/hadith/books"],
   });
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-muted-foreground">Loading books...</div>
+        <div className="text-muted-foreground">Loading hadith collections...</div>
       </div>
     );
   }
@@ -26,13 +30,12 @@ export default function BooksLibrary() {
           <button
             onClick={() => setLocation("/library")}
             className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
-            data-testid="button-back"
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <div>
-            <h1 className="text-xl font-semibold text-foreground">Islamic Books</h1>
-            <p className="text-sm text-muted-foreground">Browse our collection</p>
+            <h1 className="text-xl font-semibold text-foreground">Hadith Collections</h1>
+            <p className="text-sm text-muted-foreground">Select a collection to browse</p>
           </div>
         </div>
       </div>
@@ -40,13 +43,13 @@ export default function BooksLibrary() {
       <div className="px-4 py-6 space-y-3 max-w-4xl mx-auto">
         {books?.map((book, index) => (
           <ListCard
-            key={book.id}
+            key={book.bookName}
             number={index + 1}
-            title={book.title}
-            subtitle={`By ${book.author} • ${book.category}`}
-            count={book.totalPages}
-            countLabel="Pages"
-            onClick={() => setLocation(`/library/books/${book.id}`)}
+            title={book.bookName}
+            subtitle="Authentic Hadith Collection"
+            count={book.totalHadiths}
+            countLabel="Hadiths"
+            onClick={() => setLocation(`/library/hadith/${encodeURIComponent(book.bookName)}`)}
           />
         ))}
       </div>
