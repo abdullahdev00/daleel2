@@ -1,4 +1,4 @@
-import { Home, Compass, CreditCard, BookOpen, Settings } from "lucide-react";
+import { Home, BookOpen, Settings } from "lucide-react";
 import { useLocation } from "wouter";
 
 interface NavItem {
@@ -9,19 +9,17 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { icon: Home, label: "Home", path: "/" },
-  { icon: Compass, label: "Explore", path: "/explore" },
-  { icon: CreditCard, label: "Card", path: "/card" },
-  { icon: BookOpen, label: "Discover", path: "/books" },
-  { icon: Settings, label: "Services", path: "/services" },
+  { icon: BookOpen, label: "Library", path: "/library" },
+  { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
 export default function BottomNavigation() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
 
   return (
     <div 
-      className="fixed bottom-0 left-0 right-0 h-[70px] border-t z-50"
-      style={{ backgroundColor: '#242F30', borderTopColor: '#3A4748' }}
+      className="fixed bottom-0 left-0 right-0 h-[70px] border-t z-50 bg-sidebar"
+      style={{ borderTopColor: '#3A4748' }}
       data-testid="bottom-navigation"
     >
       <div className="h-full flex items-center justify-around px-2">
@@ -30,9 +28,9 @@ export default function BottomNavigation() {
           const isActive = location === item.path;
           
           return (
-            <a
+            <button
               key={item.path}
-              href={item.path}
+              onClick={() => setLocation(item.path)}
               className="flex flex-col items-center gap-1 py-2 px-3 transition-colors relative"
               data-testid={`nav-${item.label.toLowerCase()}`}
             >
@@ -48,7 +46,7 @@ export default function BottomNavigation() {
                   style={{ backgroundColor: '#C9A96E' }}
                 />
               )}
-            </a>
+            </button>
           );
         })}
       </div>

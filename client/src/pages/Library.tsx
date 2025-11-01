@@ -1,23 +1,25 @@
-import { BookOpen, Scroll, Library } from "lucide-react";
+import { BookOpen, Scroll, Library as LibraryIcon } from "lucide-react";
 import { useLocation } from "wouter";
-import StatusBar from "@/components/StatusBar";
-import HeroSection from "@/components/HeroSection";
+import SearchBar from "@/components/SearchBar";
 import CategoryCard from "@/components/CategoryCard";
-import PrayerTimesWidget from "@/components/PrayerTimesWidget";
 
-export default function Home() {
+export default function Library() {
   const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen bg-background lg:pb-0 pb-[70px]">
-      <StatusBar />
-      <HeroSection />
+      <div className="sticky top-0 z-40 bg-background border-b border-border">
+        <div className="px-4 py-4">
+          <h1 className="text-2xl font-serif font-semibold text-foreground mb-4">
+            Islamic Library
+          </h1>
+          <SearchBar placeholder="Search books, verses, hadiths..." />
+        </div>
+      </div>
       
       <div className="px-4 py-6 space-y-6 max-w-7xl mx-auto">
         <div>
-          <h2 className="text-2xl font-serif font-semibold text-foreground mb-4">
-            Explore Islamic Knowledge
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground mb-4">Browse by Category</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <CategoryCard
               title="Quran"
@@ -38,15 +40,13 @@ export default function Home() {
             <CategoryCard
               title="Books"
               description="Islamic literature"
-              icon={Library}
+              icon={LibraryIcon}
               gradient="linear-gradient(135deg, #3D5556 0%, #2F4445 100%)"
               count={2}
               onClick={() => setLocation("/library/books")}
             />
           </div>
         </div>
-        
-        <PrayerTimesWidget />
       </div>
     </div>
   );
