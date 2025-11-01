@@ -1,53 +1,97 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import TranslationDrawer from "./TranslationDrawer";
+import TafseerDrawer from "./TafseerDrawer";
+import { useQuranSettings } from "@/contexts/QuranSettingsContext";
+
 interface VerseCardProps {
   verseNumber: number;
+  surahNumber: number;
   arabicText: string;
   translation: string;
-  transliteration?: string;
-  surahName: string;
 }
 
 export default function VerseCard({ 
-  verseNumber, 
+  verseNumber,
+  surahNumber,
   arabicText, 
-  translation, 
-  transliteration,
-  surahName
+  translation,
 }: VerseCardProps) {
+  const [translationOpen, setTranslationOpen] = useState(false);
+  const [tafseerOpen, setTafseerOpen] = useState(false);
+  const { settings } = useQuranSettings();
+
   return (
-    <div 
-      className="bg-card border border-card-border rounded-xl p-5 space-y-4 hover-elevate transition-all"
-      data-testid={`verse-card-${verseNumber}`}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground text-sm font-semibold">
-              {verseNumber}
+    <>
+      <div 
+        className="bg-card border border-card-border rounded-2xl p-6 space-y-6 hover-elevate transition-all"
+        data-testid={`verse-card-${verseNumber}`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full px-4 h-9"
+              onClick={() => setTranslationOpen(true)}
+              data-testid={`button-translation-${verseNumber}`}
+            >
+              Translation
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full px-4 h-9"
+              onClick={() => setTafseerOpen(true)}
+              data-testid={`button-tafseer-${verseNumber}`}
+            >
+              Tafseer
+            </Button>
+          </div>
+          
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/20">
+            <span className="text-sm font-semibold text-primary" data-testid="text-verse-reference">
+              {surahNumber}:{verseNumber}
             </span>
           </div>
-          <span className="text-sm text-muted-foreground">{surahName}</span>
+        </div>
+        
+        <div className="space-y-5">
+          <p 
+            className="font-arabic leading-loose text-right"
+            style={{ fontSize: `${settings.arabicFontSize}px` }}
+            dir="rtl"
+            data-testid="text-arabic"
+          >
+            {arabicText}
+          </p>
+          
+          <div className="w-full h-px bg-border" />
+          
+          <p 
+            className="text-foreground leading-relaxed"
+            style={{ fontSize: `${settings.translationFontSize}px` }}
+            data-testid="text-translation"
+          >
+            {translation}
+          </p>
         </div>
       </div>
-      
-      <div className="space-y-3">
-        <p 
-          className="text-2xl font-arabic leading-loose text-right"
-          dir="rtl"
-          data-testid="text-arabic"
-        >
-          {arabicText}
-        </p>
-        
-        {transliteration && (
-          <p className="text-sm text-muted-foreground italic" data-testid="text-transliteration">
-            {transliteration}
-          </p>
-        )}
-        
-        <p className="text-base text-foreground leading-relaxed" data-testid="text-translation">
-          {translation}
-        </p>
-      </div>
-    </div>
+
+      <TranslationDrawer
+        open={translationOpen}
+        onOpenChange={setTranslationOpen}
+        verseNumber={verseNumber}
+        surahNumber={surahNumber}
+        translation={translation}
+      />
+
+      <TafseerDrawer
+        open={tafseerOpen}
+        onOpenChange={setTafseerOpen}
+        verseNumber={verseNumber}
+        surahNumber={surahNumber}
+      />
+    </>
   );
 }
