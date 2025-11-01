@@ -56,19 +56,21 @@ export default function QuranSurahList() {
         </div>
       </div>
       
-      <div className="px-4 py-6 space-y-3 max-w-4xl mx-auto">
-        {surahs?.map((surah) => (
-          <ListCard
-            key={surah.surahNumber}
-            number={surah.surahNumber}
-            title={surah.surahName}
-            subtitle={`Surah ${surah.surahNumber}`}
-            arabicText={surah.arabicName}
-            count={surah.totalVerses}
-            countLabel="Ayahs"
-            onClick={() => setLocation(`/library/quran/${surah.surahNumber}`)}
-          />
-        ))}
+      <div className="px-4 py-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {surahs?.map((surah) => (
+            <ListCard
+              key={surah.surahNumber}
+              number={surah.surahNumber}
+              title={surah.surahName}
+              subtitle={`Surah ${surah.surahNumber}`}
+              arabicText={surah.arabicName}
+              count={surah.totalVerses}
+              countLabel="Ayahs"
+              onClick={() => setLocation(`/library/quran/${surah.surahNumber}`)}
+            />
+          ))}
+        </div>
       </div>
 
       <QuranSettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />

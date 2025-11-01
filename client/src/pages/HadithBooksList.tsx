@@ -40,18 +40,20 @@ export default function HadithBooksList() {
         </div>
       </div>
       
-      <div className="px-4 py-6 space-y-3 max-w-4xl mx-auto">
-        {books?.map((book, index) => (
-          <ListCard
-            key={book.bookName}
-            number={index + 1}
-            title={book.bookName}
-            subtitle="Authentic Hadith Collection"
-            count={book.totalHadiths}
-            countLabel="Hadiths"
-            onClick={() => setLocation(`/library/hadith/${encodeURIComponent(book.bookName)}`)}
-          />
-        ))}
+      <div className="px-4 py-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {books?.map((book, index) => (
+            <ListCard
+              key={book.bookName}
+              number={index + 1}
+              title={book.bookName}
+              subtitle="Authentic Hadith Collection"
+              count={book.totalHadiths}
+              countLabel="Hadiths"
+              onClick={() => setLocation(`/library/hadith/${encodeURIComponent(book.bookName)}`)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
