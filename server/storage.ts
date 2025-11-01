@@ -1,37 +1,54 @@
-import { type User, type InsertUser } from "@shared/schema";
+import { type Book, type InsertBook, type Chapter, type InsertChapter } from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
-
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getBooks(): Promise<Book[]>;
+  getBook(id: string): Promise<Book | undefined>;
+  createBook(book: InsertBook): Promise<Book>;
+  getChapters(bookId: string): Promise<Chapter[]>;
+  getChapter(id: string): Promise<Chapter | undefined>;
+  createChapter(chapter: InsertChapter): Promise<Chapter>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private books: Map<string, Book>;
+  private chapters: Map<string, Chapter>;
 
   constructor() {
-    this.users = new Map();
+    this.books = new Map();
+    this.chapters = new Map();
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getBooks(): Promise<Book[]> {
+    return Array.from(this.books.values());
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getBook(id: string): Promise<Book | undefined> {
+    return this.books.get(id);
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createBook(insertBook: InsertBook): Promise<Book> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const book: Book = { ...insertBook, id };
+    this.books.set(id, book);
+    return book;
+  }
+
+  async getChapters(bookId: string): Promise<Chapter[]> {
+    return Array.from(this.chapters.values())
+      .filter(chapter => chapter.bookId === bookId)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  async getChapter(id: string): Promise<Chapter | undefined> {
+    return this.chapters.get(id);
+  }
+
+  async createChapter(insertChapter: InsertChapter): Promise<Chapter> {
+    const id = randomUUID();
+    const chapter: Chapter = { ...insertChapter, id };
+    this.chapters.set(id, chapter);
+    return chapter;
   }
 }
 
