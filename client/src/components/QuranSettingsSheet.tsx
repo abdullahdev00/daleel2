@@ -20,7 +20,7 @@ export default function QuranSettingsSheet({ open, onOpenChange }: QuranSettings
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto p-0" onDoubleClick={() => onOpenChange(false)}>
-        <SheetHeader className="flex flex-row items-center justify-between px-6 py-5 border-b border-border sticky top-0 bg-background z-10">
+        <SheetHeader className="flex flex-row items-center justify-between px-4 py-4 border-b border-border sticky top-0 bg-background z-10">
           <SheetTitle data-testid="title-settings" className="text-xl">Quran Settings</SheetTitle>
           <SheetClose asChild>
             <button className="w-12 h-12 rounded-full hover-elevate active-elevate-2 flex items-center justify-center">
@@ -29,7 +29,7 @@ export default function QuranSettingsSheet({ open, onOpenChange }: QuranSettings
           </SheetClose>
         </SheetHeader>
 
-        <div className="px-6 py-6 space-y-8">
+        <div className="px-4 py-6 space-y-8">
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-semibold text-foreground mb-1">Arabic Text Size</h3>

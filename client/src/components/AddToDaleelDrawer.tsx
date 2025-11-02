@@ -98,7 +98,7 @@ export default function AddToDaleelDrawer({
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[90vh]" onClick={handleBackgroundClick} onDoubleClick={() => onOpenChange(false)}>
-        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border px-6 py-5 flex-shrink-0">
+        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border px-4 py-4 flex-shrink-0">
           <DrawerTitle className="text-xl font-semibold">
             Add to Daleel
           </DrawerTitle>
@@ -109,7 +109,7 @@ export default function AddToDaleelDrawer({
           </DrawerClose>
         </DrawerHeader>
 
-        <div className="px-6 pt-4 pb-4 space-y-4 overflow-y-auto flex-1 min-h-0">
+        <div className="px-4 pt-4 pb-4 space-y-4 overflow-y-auto flex-1 min-h-0">
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Step 1: Select Category</h3>
             <div className="overflow-x-auto pb-2 pt-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>

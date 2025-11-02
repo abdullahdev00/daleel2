@@ -32,7 +32,7 @@ export default function TranslationDrawer({
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]" onDoubleClick={() => onOpenChange(false)}>
-        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border px-6 py-5">
+        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border px-4 py-4">
           <DrawerTitle className="text-xl font-semibold" data-testid="title-translation">
             Translation
           </DrawerTitle>
