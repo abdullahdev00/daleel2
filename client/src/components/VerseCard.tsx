@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Check } from "lucide-react";
 import TranslationDrawer from "./TranslationDrawer";
 import TafseerDrawer from "./TafseerDrawer";
 import AddToDaleelDrawer from "./AddToDaleelDrawer";
 import { useQuranSettings } from "@/contexts/QuranSettingsContext";
+import { useDaleel } from "@/contexts/DaleelContext";
 
 interface VerseCardProps {
   verseNumber: number;
@@ -22,7 +23,27 @@ export default function VerseCard({
   const [translationOpen, setTranslationOpen] = useState(false);
   const [tafseerOpen, setTafseerOpen] = useState(false);
   const [daleelOpen, setDaleelOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const { settings } = useQuranSettings();
+  const { defaultDaleelId, addItem } = useDaleel();
+
+  const handleAddToDaleel = () => {
+    if (defaultDaleelId) {
+      addItem({
+        type: "verse",
+        surahNumber,
+        verseNumber,
+        arabicText,
+        translation,
+        daleelId: defaultDaleelId,
+      });
+      
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 2000);
+    } else {
+      setDaleelOpen(true);
+    }
+  };
 
   return (
     <>
@@ -53,11 +74,17 @@ export default function VerseCard({
             <Button
               variant="outline"
               size="sm"
-              className="rounded-full w-9 h-9 p-0"
-              onClick={() => setDaleelOpen(true)}
+              className={`rounded-full w-9 h-9 p-0 transition-all ${
+                showSuccess ? "bg-green-500/20 border-green-500 text-green-600" : ""
+              }`}
+              onClick={handleAddToDaleel}
               data-testid={`button-add-daleel-${verseNumber}`}
             >
-              <Plus className="w-4 h-4" />
+              {showSuccess ? (
+                <Check className="w-4 h-4 animate-in zoom-in duration-200" />
+              ) : (
+                <Plus className="w-4 h-4" />
+              )}
             </Button>
           </div>
           

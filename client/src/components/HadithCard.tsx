@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Languages, BookText, Info, Plus } from "lucide-react";
+import { Languages, BookText, Info, Plus, Check } from "lucide-react";
 import { useHadithSettings } from "@/contexts/HadithSettingsContext";
 import HadithCommentaryDrawer from "./HadithCommentaryDrawer";
 import HadithReferenceDrawer from "./HadithReferenceDrawer";
 import TranslationDrawer from "./TranslationDrawer";
 import AddToDaleelDrawer from "./AddToDaleelDrawer";
+import { useDaleel } from "@/contexts/DaleelContext";
 
 interface HadithCardProps {
   hadithNumber: number;
@@ -38,10 +39,30 @@ export default function HadithCard({
   explanation,
 }: HadithCardProps) {
   const { settings } = useHadithSettings();
+  const { defaultDaleelId, addItem } = useDaleel();
   const [translationOpen, setTranslationOpen] = useState(false);
   const [commentaryOpen, setCommentaryOpen] = useState(false);
   const [referenceOpen, setReferenceOpen] = useState(false);
   const [daleelOpen, setDaleelOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleAddToDaleel = () => {
+    if (defaultDaleelId) {
+      addItem({
+        type: "hadith",
+        hadithNumber,
+        book,
+        arabicText,
+        translation,
+        daleelId: defaultDaleelId,
+      });
+      
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 2000);
+    } else {
+      setDaleelOpen(true);
+    }
+  };
 
   return (
     <>
@@ -66,10 +87,19 @@ export default function HadithCard({
               Sharah
             </button>
             <button
-              onClick={() => setDaleelOpen(true)}
-              className="flex items-center justify-center w-9 h-9 rounded-full border border-border bg-background hover:bg-accent transition-colors"
+              onClick={handleAddToDaleel}
+              className={`flex items-center justify-center w-9 h-9 rounded-full border transition-all ${
+                showSuccess 
+                  ? "bg-green-500/20 border-green-500 text-green-600" 
+                  : "border-border bg-background hover:bg-accent"
+              }`}
+              data-testid={`button-add-daleel-${hadithNumber}`}
             >
-              <Plus className="w-4 h-4" />
+              {showSuccess ? (
+                <Check className="w-4 h-4 animate-in zoom-in duration-200" />
+              ) : (
+                <Plus className="w-4 h-4" />
+              )}
             </button>
           </div>
           
