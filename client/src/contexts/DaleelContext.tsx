@@ -33,6 +33,7 @@ interface DaleelContextType {
   categories: DaleelCategory[];
   daleels: Daleel[];
   items: DaleelItem[];
+  defaultDaleelId: string | null;
   addCategory: (name: string, color: string) => void;
   deleteCategory: (id: string) => void;
   addDaleel: (name: string, description: string, categoryId: string) => void;
@@ -42,6 +43,7 @@ interface DaleelContextType {
   removeItem: (id: string) => void;
   getItemsByDaleel: (daleelId: string) => DaleelItem[];
   getItemsByCategory: (categoryId: string) => DaleelItem[];
+  setDefaultDaleel: (daleelId: string | null) => void;
 }
 
 const DaleelContext = createContext<DaleelContextType | undefined>(undefined);
@@ -53,6 +55,11 @@ const DEFAULT_CATEGORIES: DaleelCategory[] = [
 ];
 
 export function DaleelProvider({ children }: { children: ReactNode }) {
+  const [defaultDaleelId, setDefaultDaleelId] = useState<string | null>(() => {
+    const stored = localStorage.getItem("daleel-default");
+    return stored || null;
+  });
+
   const [categories, setCategories] = useState<DaleelCategory[]>(() => {
     const stored = localStorage.getItem("daleel-categories");
     if (stored) {
@@ -161,6 +168,11 @@ export function DaleelProvider({ children }: { children: ReactNode }) {
             : cat
         )
       );
+      
+      if (defaultDaleelId === id) {
+        setDefaultDaleelId(null);
+        localStorage.removeItem("daleel-default");
+      }
     }
   };
 
@@ -213,12 +225,22 @@ export function DaleelProvider({ children }: { children: ReactNode }) {
     return items.filter((item) => categoryDaleelIds.includes(item.daleelId));
   };
 
+  const setDefaultDaleel = (daleelId: string | null) => {
+    setDefaultDaleelId(daleelId);
+    if (daleelId) {
+      localStorage.setItem("daleel-default", daleelId);
+    } else {
+      localStorage.removeItem("daleel-default");
+    }
+  };
+
   return (
     <DaleelContext.Provider
       value={{
         categories,
         daleels,
         items,
+        defaultDaleelId,
         addCategory,
         deleteCategory,
         addDaleel,
@@ -228,6 +250,7 @@ export function DaleelProvider({ children }: { children: ReactNode }) {
         removeItem,
         getItemsByDaleel,
         getItemsByCategory,
+        setDefaultDaleel,
       }}
     >
       {children}

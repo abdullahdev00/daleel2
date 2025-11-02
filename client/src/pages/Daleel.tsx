@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useDaleel } from "@/contexts/DaleelContext";
-import { Plus, Trash2, BookOpen, Scroll, FolderOpen } from "lucide-react";
+import { Plus, Trash2, BookOpen, Scroll, FolderOpen, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DaleelCreateDialog from "@/components/DaleelCreateDialog";
+import DaleelDeleteDialog from "@/components/DaleelDeleteDialog";
 import { Input } from "@/components/ui/input";
 
 export default function Daleel() {
@@ -10,11 +11,13 @@ export default function Daleel() {
     categories, 
     daleels, 
     items, 
+    defaultDaleelId,
     getDaleelsByCategory, 
     getItemsByDaleel,
     removeItem,
     deleteDaleel,
-    addCategory 
+    addCategory,
+    setDefaultDaleel 
   } = useDaleel();
   
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -22,6 +25,8 @@ export default function Daleel() {
   const [showDaleelDialog, setShowDaleelDialog] = useState(false);
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [daleelToDelete, setDaleelToDelete] = useState<{id: string, name: string} | null>(null);
 
   const colors = ["#5A7A6B", "#C9A96E", "#3D5556", "#8B7355", "#4A6A5B"];
 
@@ -98,15 +103,15 @@ export default function Daleel() {
             </div>
           )}
           
-          <div className="overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="overflow-x-auto pb-3 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <style>{`.overflow-x-auto::-webkit-scrollbar { display: none; }`}</style>
-            <div className="flex gap-2 min-w-max">
+            <div className="flex gap-2 min-w-max py-1">
               <button
                 onClick={() => {
                   setSelectedCategory("all");
                   setSelectedDaleel(null);
                 }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                   selectedCategory === "all"
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted hover:bg-muted/80 text-foreground"
@@ -121,7 +126,7 @@ export default function Daleel() {
                     setSelectedCategory(category.id);
                     setSelectedDaleel(null);
                   }}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                     selectedCategory === category.id
                       ? "ring-2 ring-offset-2 ring-primary scale-105"
                       : "hover:scale-105"
@@ -174,6 +179,7 @@ export default function Daleel() {
                         ? "ring-2 ring-primary border-primary hover-elevate"
                         : "border-border hover-elevate"
                     }`}
+                    data-testid={`card-daleel-${daleel.id}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
@@ -181,22 +187,45 @@ export default function Daleel() {
                           <FolderOpen className="w-5 h-5 text-primary" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-foreground">{daleel.name}</h3>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-foreground">{daleel.name}</h3>
+                            {defaultDaleelId === daleel.id && (
+                              <span className="text-xs bg-amber-500/20 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium">
+                                Default
+                              </span>
+                            )}
+                          </div>
                           <p className="text-xs text-muted-foreground">{daleel.itemCount} items</p>
                         </div>
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (selectedDaleel === daleel.id) {
-                            setSelectedDaleel(null);
-                          }
-                          deleteDaleel(daleel.id);
-                        }}
-                        className="w-8 h-8 rounded-lg hover:bg-destructive/10 text-destructive flex items-center justify-center transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDefaultDaleel(defaultDaleelId === daleel.id ? null : daleel.id);
+                          }}
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+                            defaultDaleelId === daleel.id
+                              ? "bg-amber-500/20 text-amber-600 hover:bg-amber-500/30"
+                              : "hover:bg-muted text-muted-foreground"
+                          }`}
+                          title={defaultDaleelId === daleel.id ? "Remove as default" : "Set as default"}
+                          data-testid={`button-default-${daleel.id}`}
+                        >
+                          <Star className={`w-4 h-4 ${defaultDaleelId === daleel.id ? "fill-current" : ""}`} />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDaleelToDelete({id: daleel.id, name: daleel.name});
+                            setDeleteDialogOpen(true);
+                          }}
+                          className="w-8 h-8 rounded-lg hover:bg-destructive/10 text-destructive flex items-center justify-center transition-colors"
+                          data-testid={`button-delete-${daleel.id}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                     {daleel.description && (
                       <p className="text-xs text-muted-foreground line-clamp-2">
@@ -283,6 +312,22 @@ export default function Daleel() {
         open={showDaleelDialog}
         onOpenChange={setShowDaleelDialog}
         categoryId={selectedCategory}
+      />
+      
+      <DaleelDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        daleelName={daleelToDelete?.name || ""}
+        onConfirm={() => {
+          if (daleelToDelete) {
+            if (selectedDaleel === daleelToDelete.id) {
+              setSelectedDaleel(null);
+            }
+            deleteDaleel(daleelToDelete.id);
+            setDaleelToDelete(null);
+            setDeleteDialogOpen(false);
+          }
+        }}
       />
     </div>
   );

@@ -99,34 +99,37 @@ export default function AddToDaleelDrawer({
         <div className="px-4 pt-4 pb-6 space-y-6 overflow-y-auto">
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Step 1: Select Category</h3>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
+            <div className="overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <style>{`.overflow-x-auto::-webkit-scrollbar { display: none; }`}</style>
+              <div className="flex gap-2 min-w-max">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => {
+                      setSelectedCategory(category.id);
+                      setSelectedDaleel("");
+                    }}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                      selectedCategory === category.id
+                        ? "ring-2 ring-offset-2 ring-primary"
+                        : "hover:scale-105"
+                    }`}
+                    style={{
+                      backgroundColor: selectedCategory === category.id ? category.color : `${category.color}40`,
+                      color: selectedCategory === category.id ? "white" : category.color,
+                    }}
+                  >
+                    {category.name}
+                  </button>
+                ))}
                 <button
-                  key={category.id}
-                  onClick={() => {
-                    setSelectedCategory(category.id);
-                    setSelectedDaleel("");
-                  }}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    selectedCategory === category.id
-                      ? "ring-2 ring-offset-2 ring-primary"
-                      : "hover:scale-105"
-                  }`}
-                  style={{
-                    backgroundColor: selectedCategory === category.id ? category.color : `${category.color}40`,
-                    color: selectedCategory === category.id ? "white" : category.color,
-                  }}
+                  onClick={() => setShowNewCategory(!showNewCategory)}
+                  className="px-4 py-2 rounded-full text-sm font-medium bg-muted hover:bg-muted/80 text-foreground transition-all flex items-center gap-1 whitespace-nowrap"
                 >
-                  {category.name}
+                  <Plus className="w-4 h-4" />
+                  New Category
                 </button>
-              ))}
-              <button
-                onClick={() => setShowNewCategory(!showNewCategory)}
-                className="px-4 py-2 rounded-full text-sm font-medium bg-muted hover:bg-muted/80 text-foreground transition-all flex items-center gap-1"
-              >
-                <Plus className="w-4 h-4" />
-                New Category
-              </button>
+              </div>
             </div>
           </div>
 
