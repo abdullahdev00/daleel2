@@ -98,13 +98,13 @@ export default function AddToDaleelDrawer({
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[90vh]" onClick={handleBackgroundClick} onDoubleClick={() => onOpenChange(false)}>
-        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border px-4 py-4 flex-shrink-0">
+        <DrawerHeader className="h-16 flex flex-row items-center justify-between border-b border-border px-4 py-3 flex-shrink-0">
           <DrawerTitle className="text-xl font-semibold">
             Add to Daleel
           </DrawerTitle>
           <DrawerClose asChild>
-            <button className="w-12 h-12 rounded-full hover-elevate active-elevate-2 flex items-center justify-center">
-              <X className="w-6 h-6" />
+            <button className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center">
+              <X className="w-5 h-5" />
             </button>
           </DrawerClose>
         </DrawerHeader>

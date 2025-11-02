@@ -101,6 +101,27 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
+  /* Professional Spacing System - Base unit: 4px */
+  --spacing-xs: 0.5rem;   /* 8px */
+  --spacing-sm: 0.75rem;  /* 12px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.25rem;  /* 20px */
+  --spacing-xl: 1.5rem;   /* 24px */
+  --spacing-2xl: 2rem;    /* 32px */
+  
+  /* Standard Header Height */
+  --header-height: 4rem;  /* 64px - All headers across app */
+  --header-padding-x: var(--spacing-md);  /* 16px */
+  --header-padding-y: var(--spacing-sm);  /* 12px */
+  
+  /* Standard Button Sizes in Headers */
+  --header-button-size: 2.5rem;  /* 40px */
+  --header-icon-size: 1.25rem;   /* 20px */
+  
+  /* Content Padding */
+  --content-padding-x: var(--spacing-md);  /* 16px */
+  --content-padding-y: var(--spacing-xl);  /* 24px */
+
   /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
 
   /* Fallback for older browsers */

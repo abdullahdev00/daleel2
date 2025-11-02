@@ -20,11 +20,11 @@ export default function QuranSettingsSheet({ open, onOpenChange }: QuranSettings
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto p-0" onDoubleClick={() => onOpenChange(false)}>
-        <SheetHeader className="flex flex-row items-center justify-between px-4 py-4 border-b border-border sticky top-0 bg-background z-10">
+        <SheetHeader className="h-16 flex flex-row items-center justify-between px-4 py-3 border-b border-border sticky top-0 bg-background z-10">
           <SheetTitle data-testid="title-settings" className="text-xl">Quran Settings</SheetTitle>
           <SheetClose asChild>
-            <button className="w-12 h-12 rounded-full hover-elevate active-elevate-2 flex items-center justify-center">
-              <X className="w-6 h-6" />
+            <button className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center">
+              <X className="w-5 h-5" />
             </button>
           </SheetClose>
         </SheetHeader>

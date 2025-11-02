@@ -47,7 +47,7 @@ export default function QuranReader() {
   return (
     <div className="min-h-screen bg-background lg:pb-0 pb-[70px]">
       <div className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="px-4 py-4 flex items-center justify-between">
+        <div className="h-16 px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setLocation("/library/quran")}
