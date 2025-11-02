@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
-import { X, Plus } from "lucide-react";
+import { X, Plus, FolderOpen, ChevronRight } from "lucide-react";
 import { useDaleel } from "@/contexts/DaleelContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface AddToDaleelDrawerProps {
   open: boolean;
@@ -24,22 +25,29 @@ export default function AddToDaleelDrawer({
   onOpenChange,
   item,
 }: AddToDaleelDrawerProps) {
-  const { categories, addItem, addCategory } = useDaleel();
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const { categories, daleels, addItem, addCategory, addDaleel, getDaleelsByCategory } = useDaleel();
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedDaleel, setSelectedDaleel] = useState<string>("");
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [showNewDaleel, setShowNewDaleel] = useState(false);
+  const [newDaleelName, setNewDaleelName] = useState("");
+  const [newDaleelDescription, setNewDaleelDescription] = useState("");
   const [lastClickTime, setLastClickTime] = useState(0);
 
   const colors = ["#5A7A6B", "#C9A96E", "#3D5556", "#8B7355", "#4A6A5B"];
 
+  const categoryDaleels = selectedCategory ? getDaleelsByCategory(selectedCategory) : [];
+
   const handleSave = () => {
-    if (selectedCategory && selectedCategory !== "all") {
+    if (selectedDaleel) {
       addItem({
         ...item,
-        categoryId: selectedCategory,
+        daleelId: selectedDaleel,
       });
       onOpenChange(false);
-      setSelectedCategory("all");
+      setSelectedCategory("");
+      setSelectedDaleel("");
     }
   };
 
@@ -52,9 +60,18 @@ export default function AddToDaleelDrawer({
     }
   };
 
+  const handleCreateDaleel = () => {
+    if (newDaleelName.trim() && selectedCategory) {
+      addDaleel(newDaleelName.trim(), newDaleelDescription.trim(), selectedCategory);
+      setNewDaleelName("");
+      setNewDaleelDescription("");
+      setShowNewDaleel(false);
+    }
+  };
+
   const handleBackgroundClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (target.closest('button') || target.closest('input')) {
+    if (target.closest('button') || target.closest('input') || target.closest('textarea')) {
       return;
     }
 
@@ -79,24 +96,17 @@ export default function AddToDaleelDrawer({
           </DrawerClose>
         </DrawerHeader>
 
-        <div className="px-4 pt-4 pb-6 space-y-6">
+        <div className="px-4 pt-4 pb-6 space-y-6 overflow-y-auto">
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-3">Select Category</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Step 1: Select Category</h3>
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setSelectedCategory("all")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedCategory === "all"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted hover:bg-muted/80 text-foreground"
-                }`}
-              >
-                All
-              </button>
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
+                  onClick={() => {
+                    setSelectedCategory(category.id);
+                    setSelectedDaleel("");
+                  }}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                     selectedCategory === category.id
                       ? "ring-2 ring-offset-2 ring-primary"
@@ -147,6 +157,89 @@ export default function AddToDaleelDrawer({
             </div>
           )}
 
+          {selectedCategory && (
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                <ChevronRight className="w-4 h-4" />
+                Step 2: Select Daleel
+              </h3>
+              
+              {categoryDaleels.length === 0 && !showNewDaleel ? (
+                <div className="text-center py-8 bg-muted/30 rounded-xl border border-dashed border-border">
+                  <FolderOpen className="w-10 h-10 mx-auto mb-2 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground mb-3">No daleel in this category</p>
+                  <Button
+                    onClick={() => setShowNewDaleel(true)}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-lg"
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Create First Daleel
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-wrap gap-2">
+                    {categoryDaleels.map((daleel) => (
+                      <button
+                        key={daleel.id}
+                        onClick={() => setSelectedDaleel(daleel.id)}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                          selectedDaleel === daleel.id
+                            ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-primary"
+                            : "bg-muted hover:bg-muted/80 text-foreground"
+                        }`}
+                      >
+                        {daleel.name} ({daleel.itemCount})
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setShowNewDaleel(!showNewDaleel)}
+                      className="px-4 py-2 rounded-full text-sm font-medium bg-muted hover:bg-muted/80 text-foreground transition-all flex items-center gap-1"
+                    >
+                      <Plus className="w-4 h-4" />
+                      New Daleel
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {showNewDaleel && selectedCategory && (
+            <div className="p-4 bg-muted/50 rounded-xl border border-border space-y-3 animate-in slide-in-from-top-2">
+              <Input
+                placeholder="Daleel name..."
+                value={newDaleelName}
+                onChange={(e) => setNewDaleelName(e.target.value)}
+                className="rounded-lg"
+              />
+              <Textarea
+                placeholder="Description (optional)..."
+                value={newDaleelDescription}
+                onChange={(e) => setNewDaleelDescription(e.target.value)}
+                className="rounded-lg min-h-[80px]"
+              />
+              <div className="flex gap-2">
+                <Button onClick={handleCreateDaleel} className="flex-1 rounded-lg">
+                  Create Daleel
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowNewDaleel(false);
+                    setNewDaleelName("");
+                    setNewDaleelDescription("");
+                  }}
+                  className="flex-1 rounded-lg"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
           <div className="p-4 bg-card rounded-xl border border-border space-y-3">
             <h3 className="text-sm font-semibold text-foreground">Preview</h3>
             <p className="text-xs text-muted-foreground line-clamp-2">
@@ -156,7 +249,7 @@ export default function AddToDaleelDrawer({
 
           <Button
             onClick={handleSave}
-            disabled={selectedCategory === "all"}
+            disabled={!selectedDaleel}
             className="w-full rounded-lg h-11"
           >
             Save to Daleel
