@@ -1,9 +1,13 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Settings, Plus, Check } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import PageCard from "@/components/PageCard";
 import { useQuery } from "@tanstack/react-query";
 import type { Book, BookPage } from "@shared/schema";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, lazy, Suspense } from "react";
+import { useDaleel } from "@/contexts/DaleelContext";
+
+const AddToDaleelDrawer = lazy(() => import("@/components/AddToDaleelDrawer"));
+const BookSettingsSheet = lazy(() => import("@/components/BookSettingsSheet"));
 
 const PageScaleWrapper = ({ children }: { children: React.ReactNode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,6 +55,10 @@ export default function BookPagesReader() {
   const [, setLocation] = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
   const pageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [daleelOpen, setDaleelOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { defaultDaleelId, addItem } = useDaleel();
 
   const { data: book, isLoading: bookLoading } = useQuery<Book>({
     queryKey: [`/api/books/${bookId}`],
@@ -61,6 +69,29 @@ export default function BookPagesReader() {
     queryKey: [`/api/books/${bookId}/pages`],
     enabled: !!bookId,
   });
+
+  const currentPageData = pages?.find(p => p.pageNumber === currentPage);
+
+  const handleAddToDaleel = () => {
+    if (!currentPageData || !book) return;
+    
+    if (defaultDaleelId) {
+      addItem({
+        type: "page",
+        bookId: book.id,
+        bookTitle: book.title,
+        pageNumber: currentPageData.pageNumber,
+        arabicText: currentPageData.content,
+        translation: currentPageData.content,
+        daleelId: defaultDaleelId,
+      });
+      
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 2000);
+    } else {
+      setDaleelOpen(true);
+    }
+  };
 
   // Scroll to page when clicked from sidebar
   const scrollToPage = (pageNumber: number) => {
@@ -114,18 +145,28 @@ export default function BookPagesReader() {
     <div className="min-h-screen bg-background lg:pb-0 pb-[70px]">
       {/* Header - 64px */}
       <div className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="h-16 px-4 py-3 flex items-center gap-3">
-          <button
-            onClick={() => setLocation("/library/books")}
-            className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
-            data-testid="button-back"
-          >
-            <ArrowLeft className="w-5 h-5 text-foreground" />
-          </button>
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">{book.title}</h1>
-            <p className="text-sm text-muted-foreground">By {book.author}</p>
+        <div className="h-16 px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setLocation("/library/books")}
+              className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
+              data-testid="button-back"
+            >
+              <ArrowLeft className="w-5 h-5 text-foreground" />
+            </button>
+            <div>
+              <h1 className="text-xl font-semibold text-foreground">{book.title}</h1>
+              <p className="text-sm text-muted-foreground">By {book.author}</p>
+            </div>
           </div>
+          
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
+            data-testid="button-settings"
+          >
+            <Settings className="w-5 h-5 text-foreground" />
+          </button>
         </div>
       </div>
 
@@ -197,6 +238,51 @@ export default function BookPagesReader() {
           </div>
         </div>
       </div>
+
+      {/* Floating Add to Daleel Button */}
+      <button
+        onClick={handleAddToDaleel}
+        className={`fixed bottom-20 lg:bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-30 ${
+          showSuccess 
+            ? "bg-green-500/90 border-2 border-green-400" 
+            : "bg-primary hover:bg-primary/90"
+        }`}
+        data-testid="button-add-to-daleel"
+      >
+        {showSuccess ? (
+          <Check className="w-6 h-6 text-white animate-in zoom-in duration-200" />
+        ) : (
+          <Plus className="w-6 h-6 text-primary-foreground" />
+        )}
+      </button>
+
+      {/* Lazy Loaded Drawers/Sheets */}
+      {settingsOpen && (
+        <Suspense fallback={null}>
+          <BookSettingsSheet 
+            open={settingsOpen} 
+            onOpenChange={setSettingsOpen}
+            bookTitle={book.title}
+          />
+        </Suspense>
+      )}
+
+      {daleelOpen && currentPageData && (
+        <Suspense fallback={null}>
+          <AddToDaleelDrawer
+            open={daleelOpen}
+            onOpenChange={setDaleelOpen}
+            item={{
+              type: "page",
+              bookId: book.id,
+              bookTitle: book.title,
+              pageNumber: currentPageData.pageNumber,
+              arabicText: currentPageData.content,
+              translation: currentPageData.content,
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

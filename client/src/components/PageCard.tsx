@@ -1,3 +1,5 @@
+import { useBookSettings } from "@/contexts/BookSettingsContext";
+
 interface PageCardProps {
   pageNumber: number;
   content: string;
@@ -6,6 +8,8 @@ interface PageCardProps {
 }
 
 export default function PageCard({ pageNumber, content, bookTitle, chapterName }: PageCardProps) {
+  const { settings } = useBookSettings();
+
   return (
     <div 
       className="bg-card border border-card-border shadow-lg"
@@ -32,9 +36,10 @@ export default function PageCard({ pageNumber, content, bookTitle, chapterName }
 
       {/* Page Content */}
       <div 
-        className="px-8 py-8 text-lg font-arabic leading-loose text-right"
+        className="px-8 py-8 font-arabic leading-loose text-right"
         style={{
           height: 'calc(297mm - 70px)',
+          fontSize: `${settings.fontSize}px`,
           wordBreak: 'keep-all',
           whiteSpace: 'pre-wrap',
           overflowWrap: 'normal',

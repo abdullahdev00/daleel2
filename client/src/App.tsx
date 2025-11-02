@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { QuranSettingsProvider } from "@/contexts/QuranSettingsContext";
 import { HadithSettingsProvider } from "@/contexts/HadithSettingsContext";
+import { BookSettingsProvider } from "@/contexts/BookSettingsContext";
 import { DaleelProvider } from "@/contexts/DaleelContext";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -53,24 +54,26 @@ function App() {
       <ThemeProvider>
         <QuranSettingsProvider>
           <HadithSettingsProvider>
-            <DaleelProvider>
-              <TooltipProvider>
-                <SidebarProvider style={style as React.CSSProperties}>
-                  <div className="flex h-screen w-full">
-                    <div className="hidden lg:block">
-                      <AppSidebar />
+            <BookSettingsProvider>
+              <DaleelProvider>
+                <TooltipProvider>
+                  <SidebarProvider style={style as React.CSSProperties}>
+                    <div className="flex h-screen w-full">
+                      <div className="hidden lg:block">
+                        <AppSidebar />
+                      </div>
+                      <main className="flex-1 overflow-auto">
+                        <Router />
+                      </main>
+                      <div className="lg:hidden">
+                        <BottomNavigation />
+                      </div>
                     </div>
-                    <main className="flex-1 overflow-auto">
-                      <Router />
-                    </main>
-                    <div className="lg:hidden">
-                      <BottomNavigation />
-                    </div>
-                  </div>
-                </SidebarProvider>
-                <Toaster />
-              </TooltipProvider>
-            </DaleelProvider>
+                  </SidebarProvider>
+                  <Toaster />
+                </TooltipProvider>
+              </DaleelProvider>
+            </BookSettingsProvider>
           </HadithSettingsProvider>
         </QuranSettingsProvider>
       </ThemeProvider>
