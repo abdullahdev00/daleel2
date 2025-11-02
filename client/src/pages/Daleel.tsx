@@ -143,12 +143,15 @@ export default function Daleel() {
           </div>
         </div>
 
-        {selectedCategory !== "all" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-foreground">
-                {categories.find(c => c.id === selectedCategory)?.name} Daleel
-              </h2>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-foreground">
+              {selectedCategory === "all" 
+                ? "All Daleel" 
+                : `${categories.find(c => c.id === selectedCategory)?.name} Daleel`
+              }
+            </h2>
+            {selectedCategory !== "all" && (
               <button
                 onClick={() => setShowDaleelDialog(true)}
                 className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 hover:bg-primary/20 text-primary transition-all flex items-center gap-1"
@@ -156,88 +159,93 @@ export default function Daleel() {
                 <Plus className="w-3.5 h-3.5" />
                 Create Daleel
               </button>
-            </div>
-            
-            {displayDaleels.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                  <FolderOpen className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <p className="text-muted-foreground">No daleel created yet</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Create your first daleel to organize verses and hadiths
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {displayDaleels.map((daleel) => (
-                  <div
-                    key={daleel.id}
-                    onClick={() => setSelectedDaleel(daleel.id)}
-                    className={`bg-card border rounded-2xl p-5 space-y-3 cursor-pointer transition-all ${
-                      selectedDaleel === daleel.id
-                        ? "ring-2 ring-primary border-primary hover-elevate"
-                        : "border-border hover-elevate"
-                    }`}
-                    data-testid={`card-daleel-${daleel.id}`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <FolderOpen className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-foreground">{daleel.name}</h3>
-                            {defaultDaleelId === daleel.id && (
-                              <span className="text-xs bg-amber-500/20 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium">
-                                Default
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground">{daleel.itemCount} items</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDefaultDaleel(defaultDaleelId === daleel.id ? null : daleel.id);
-                          }}
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
-                            defaultDaleelId === daleel.id
-                              ? "bg-amber-500/20 text-amber-600 hover:bg-amber-500/30"
-                              : "hover:bg-muted text-muted-foreground"
-                          }`}
-                          title={defaultDaleelId === daleel.id ? "Remove as default" : "Set as default"}
-                          data-testid={`button-default-${daleel.id}`}
-                        >
-                          <Star className={`w-4 h-4 ${defaultDaleelId === daleel.id ? "fill-current" : ""}`} />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDaleelToDelete({id: daleel.id, name: daleel.name});
-                            setDeleteDialogOpen(true);
-                          }}
-                          className="w-8 h-8 rounded-lg hover:bg-destructive/10 text-destructive flex items-center justify-center transition-colors"
-                          data-testid={`button-delete-${daleel.id}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                    {daleel.description && (
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {daleel.description}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
             )}
           </div>
-        )}
+          
+          {displayDaleels.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                <FolderOpen className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground">
+                {selectedCategory === "all" ? "No daleel created yet" : "No daleel in this category"}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {selectedCategory === "all" 
+                  ? "Select a category and create your first daleel"
+                  : "Create your first daleel to organize verses and hadiths"
+                }
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {displayDaleels.map((daleel) => (
+                <div
+                  key={daleel.id}
+                  onClick={() => setSelectedDaleel(daleel.id)}
+                  className={`bg-card border rounded-2xl p-5 space-y-3 cursor-pointer transition-all ${
+                    selectedDaleel === daleel.id
+                      ? "ring-2 ring-primary border-primary hover-elevate"
+                      : "border-border hover-elevate"
+                  }`}
+                  data-testid={`card-daleel-${daleel.id}`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <FolderOpen className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-foreground">{daleel.name}</h3>
+                          {defaultDaleelId === daleel.id && (
+                            <span className="text-xs bg-amber-500/20 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full font-medium">
+                              Default
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">{daleel.itemCount} items</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDefaultDaleel(defaultDaleelId === daleel.id ? null : daleel.id);
+                        }}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+                          defaultDaleelId === daleel.id
+                            ? "bg-amber-500/20 text-amber-600 hover:bg-amber-500/30"
+                            : "hover:bg-muted text-muted-foreground"
+                        }`}
+                        title={defaultDaleelId === daleel.id ? "Remove as default" : "Set as default"}
+                        data-testid={`button-default-${daleel.id}`}
+                      >
+                        <Star className={`w-4 h-4 ${defaultDaleelId === daleel.id ? "fill-current" : ""}`} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDaleelToDelete({id: daleel.id, name: daleel.name});
+                          setDeleteDialogOpen(true);
+                        }}
+                        className="w-8 h-8 rounded-lg hover:bg-destructive/10 text-destructive flex items-center justify-center transition-colors"
+                        data-testid={`button-delete-${daleel.id}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  {daleel.description && (
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {daleel.description}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {selectedDaleel && (
           <div className="space-y-4">
