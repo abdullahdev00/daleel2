@@ -10,11 +10,14 @@ interface AddToDaleelDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   item: {
-    type: "verse" | "hadith";
+    type: "verse" | "hadith" | "page";
     surahNumber?: number;
     verseNumber?: number;
     hadithNumber?: number;
     book?: string;
+    bookId?: string;
+    bookTitle?: string;
+    pageNumber?: number;
     arabicText: string;
     translation: string;
   };
