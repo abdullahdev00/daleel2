@@ -2,11 +2,14 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 
 export interface DaleelItem {
   id: string;
-  type: "verse" | "hadith";
+  type: "verse" | "hadith" | "page";
   surahNumber?: number;
   verseNumber?: number;
   hadithNumber?: number;
   book?: string;
+  bookId?: string;
+  bookTitle?: string;
+  pageNumber?: number;
   arabicText: string;
   translation: string;
   daleelId: string;
