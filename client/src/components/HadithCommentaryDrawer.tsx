@@ -33,7 +33,7 @@ export default function HadithCommentaryDrawer({
           </DrawerClose>
         </DrawerHeader>
 
-        <div className="px-4 pt-4 pb-2 space-y-2 border-b border-border">
+        <div className="px-4 py-6 space-y-2 border-b border-border">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Hadith:</span>
             <span className="font-semibold text-foreground">
@@ -43,7 +43,7 @@ export default function HadithCommentaryDrawer({
         </div>
 
         <ScrollArea className="h-[500px]">
-          <div className="px-4 pt-4 pb-6">
+          <div className="px-4 py-6">
             {commentary ? (
               <p className="text-base leading-relaxed text-foreground">{commentary}</p>
             ) : (

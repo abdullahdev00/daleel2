@@ -109,7 +109,7 @@ export default function AddToDaleelDrawer({
           </DrawerClose>
         </DrawerHeader>
 
-        <div className="px-4 pt-4 pb-4 space-y-4 overflow-y-auto flex-1 min-h-0">
+        <div className="px-4 py-6 space-y-4 overflow-y-auto flex-1 min-h-0">
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Step 1: Select Category</h3>
             <div className="overflow-x-auto pb-2 pt-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>

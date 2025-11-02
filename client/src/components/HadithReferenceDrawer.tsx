@@ -48,7 +48,7 @@ export default function HadithReferenceDrawer({
         </DrawerHeader>
 
         <ScrollArea className="h-[500px]">
-          <div className="px-4 pt-4 pb-6 space-y-6">
+          <div className="px-4 py-6 space-y-6">
             <div className="space-y-1">
               <h3 className="text-sm font-semibold text-muted-foreground">Kitab (Book)</h3>
               <div className="flex flex-col gap-1">

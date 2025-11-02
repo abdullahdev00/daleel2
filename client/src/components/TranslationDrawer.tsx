@@ -46,7 +46,7 @@ export default function TranslationDrawer({
           </DrawerClose>
         </DrawerHeader>
 
-        <div className="px-4 pt-4 pb-6 space-y-4">
+        <div className="px-4 py-6 space-y-4">
           <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground whitespace-nowrap">
               Select Translation:

@@ -61,7 +61,7 @@ export function AppSidebar() {
     <Sidebar className="border-r border-border bg-background" onClick={handleDoubleClick}>
       <SidebarContent className="p-0">
         <div className="h-16 px-4 py-3 border-b border-border flex items-center">
-          <button className="w-10 h-10 rounded-lg hover:bg-accent flex items-center justify-center transition-colors">
+          <button className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center">
             <Menu className="w-5 h-5" />
           </button>
         </div>
