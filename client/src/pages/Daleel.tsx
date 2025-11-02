@@ -1,27 +1,25 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { useDaleel } from "@/contexts/DaleelContext";
-import { Plus, Trash2, BookOpen, Scroll, FolderOpen, Star } from "lucide-react";
+import { Plus, Trash2, FolderOpen, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DaleelCreateDialog from "@/components/DaleelCreateDialog";
 import DaleelDeleteDialog from "@/components/DaleelDeleteDialog";
 import { Input } from "@/components/ui/input";
 
 export default function Daleel() {
+  const [, setLocation] = useLocation();
   const { 
     categories, 
     daleels, 
-    items, 
     defaultDaleelId,
     getDaleelsByCategory, 
-    getItemsByDaleel,
-    removeItem,
     deleteDaleel,
     addCategory,
     setDefaultDaleel 
   } = useDaleel();
   
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedDaleel, setSelectedDaleel] = useState<string | null>(null);
   const [showDaleelDialog, setShowDaleelDialog] = useState(false);
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
@@ -33,12 +31,6 @@ export default function Daleel() {
   const displayDaleels = selectedCategory === "all" 
     ? daleels 
     : getDaleelsByCategory(selectedCategory);
-    
-  const displayItems = selectedDaleel 
-    ? getItemsByDaleel(selectedDaleel) 
-    : [];
-
-  const selectedDaleelObj = daleels.find(d => d.id === selectedDaleel);
 
   const handleCreateCategory = () => {
     if (newCategoryName.trim()) {
@@ -105,10 +97,7 @@ export default function Daleel() {
             <style>{`.overflow-x-auto::-webkit-scrollbar { display: none; }`}</style>
             <div className="flex gap-2 min-w-max py-1">
               <button
-                onClick={() => {
-                  setSelectedCategory("all");
-                  setSelectedDaleel(null);
-                }}
+                onClick={() => setSelectedCategory("all")}
                 className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                   selectedCategory === "all"
                     ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-primary scale-105"
@@ -121,10 +110,7 @@ export default function Daleel() {
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => {
-                    setSelectedCategory(category.id);
-                    setSelectedDaleel(null);
-                  }}
+                  onClick={() => setSelectedCategory(category.id)}
                   className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                     selectedCategory === category.id
                       ? "ring-2 ring-offset-2 ring-primary scale-105"
@@ -181,12 +167,8 @@ export default function Daleel() {
               {displayDaleels.map((daleel) => (
                 <div
                   key={daleel.id}
-                  onClick={() => setSelectedDaleel(daleel.id)}
-                  className={`bg-card border rounded-2xl p-5 space-y-3 cursor-pointer transition-all ${
-                    selectedDaleel === daleel.id
-                      ? "ring-2 ring-primary border-primary hover-elevate"
-                      : "border-border hover-elevate"
-                  }`}
+                  onClick={() => setLocation(`/daleel/${daleel.id}`)}
+                  className="bg-card border border-border rounded-2xl p-5 space-y-3 cursor-pointer transition-all hover-elevate"
                   data-testid={`card-daleel-${daleel.id}`}
                 >
                   <div className="flex items-start justify-between">
@@ -245,74 +227,6 @@ export default function Daleel() {
             </div>
           )}
         </div>
-
-        {selectedDaleel && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">
-              {selectedDaleelObj?.name} - Items
-            </h2>
-            {displayItems.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
-                  <BookOpen className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <p className="text-muted-foreground">No items saved yet</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Use the + button on verses and hadiths to add them here
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4">
-                {displayItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-card border border-border rounded-2xl p-5 space-y-4 hover-elevate transition-all"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2">
-                        {item.type === "verse" ? (
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <BookOpen className="w-5 h-5 text-primary" />
-                          </div>
-                        ) : (
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Scroll className="w-5 h-5 text-primary" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
-                            {item.type === "verse" 
-                              ? `Surah ${item.surahNumber}:${item.verseNumber}`
-                              : `${item.book} #${item.hadithNumber}`
-                            }
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {selectedDaleelObj?.name}
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="w-9 h-9 rounded-lg hover:bg-destructive/10 text-destructive flex items-center justify-center transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    <div className="space-y-3">
-                      <p className="text-sm text-foreground leading-relaxed">
-                        {item.translation}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Added {new Date(item.addedAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </div>
 
       <DaleelCreateDialog
@@ -327,9 +241,6 @@ export default function Daleel() {
         daleelName={daleelToDelete?.name || ""}
         onConfirm={() => {
           if (daleelToDelete) {
-            if (selectedDaleel === daleelToDelete.id) {
-              setSelectedDaleel(null);
-            }
             deleteDaleel(daleelToDelete.id);
             setDaleelToDelete(null);
             setDeleteDialogOpen(false);

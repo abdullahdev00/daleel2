@@ -19,6 +19,7 @@ import HadithReader from "@/pages/HadithReader";
 import BooksLibrary from "@/pages/BooksLibrary";
 import BookPagesReader from "@/pages/BookPagesReader";
 import Daleel from "@/pages/Daleel";
+import DaleelView from "@/pages/DaleelView";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/library/books" component={BooksLibrary} />
       <Route path="/library/books/:bookId" component={BookPagesReader} />
       <Route path="/daleel" component={Daleel} />
+      <Route path="/daleel/:daleelId" component={DaleelView} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
