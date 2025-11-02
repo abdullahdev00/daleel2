@@ -5,13 +5,15 @@ import { useQuery } from "@tanstack/react-query";
 import type { Book, BookPage } from "@shared/schema";
 import { useState, useRef, useEffect, lazy, Suspense } from "react";
 import { useDaleel } from "@/contexts/DaleelContext";
+import { useBookSettings } from "@/contexts/BookSettingsContext";
 
 const AddToDaleelDrawer = lazy(() => import("@/components/AddToDaleelDrawer"));
 const BookSettingsSheet = lazy(() => import("@/components/BookSettingsSheet"));
 
 const PageScaleWrapper = ({ children }: { children: React.ReactNode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const [responsiveScale, setResponsiveScale] = useState(1);
+  const { settings } = useBookSettings();
 
   useEffect(() => {
     const updateScale = () => {
@@ -19,7 +21,7 @@ const PageScaleWrapper = ({ children }: { children: React.ReactNode }) => {
         const containerWidth = containerRef.current.offsetWidth;
         const pageWidthInPixels = 210 * 3.7795275591; // 210mm to pixels (1mm = 3.7795275591px)
         const calculatedScale = Math.min(containerWidth / pageWidthInPixels, 1);
-        setScale(calculatedScale);
+        setResponsiveScale(calculatedScale);
       }
     };
 
@@ -28,6 +30,7 @@ const PageScaleWrapper = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener('resize', updateScale);
   }, []);
 
+  const finalScale = responsiveScale * settings.pageScale;
   const pageHeightInPixels = 297 * 3.7795275591; // 297mm to pixels
 
   return (
@@ -35,12 +38,12 @@ const PageScaleWrapper = ({ children }: { children: React.ReactNode }) => {
       ref={containerRef} 
       className="w-full flex justify-center"
       style={{
-        height: `${pageHeightInPixels * scale}px`,
+        height: `${pageHeightInPixels * finalScale}px`,
       }}
     >
       <div
         style={{
-          transform: `scale(${scale})`,
+          transform: `scale(${finalScale})`,
           transformOrigin: 'top center',
         }}
       >
