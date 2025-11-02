@@ -113,9 +113,10 @@ export default function Daleel() {
                 }}
                 className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                   selectedCategory === "all"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted hover:bg-muted/80 text-foreground"
+                    ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-primary scale-105"
+                    : "bg-muted hover:bg-muted/80 text-foreground hover:scale-105"
                 }`}
+                data-testid="button-category-all"
               >
                 All ({daleels.length})
               </button>
@@ -135,6 +136,7 @@ export default function Daleel() {
                     backgroundColor: selectedCategory === category.id ? category.color : `${category.color}40`,
                     color: selectedCategory === category.id ? "white" : category.color,
                   }}
+                  data-testid={`button-category-${category.id}`}
                 >
                   {category.name} ({category.daleelCount})
                 </button>
@@ -151,15 +153,14 @@ export default function Daleel() {
                 : `${categories.find(c => c.id === selectedCategory)?.name} Daleel`
               }
             </h2>
-            {selectedCategory !== "all" && (
-              <button
-                onClick={() => setShowDaleelDialog(true)}
-                className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 hover:bg-primary/20 text-primary transition-all flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Create Daleel
-              </button>
-            )}
+            <button
+              onClick={() => setShowDaleelDialog(true)}
+              className="px-3 py-1.5 rounded-full text-xs font-medium bg-primary/10 hover:bg-primary/20 text-primary transition-all flex items-center gap-1"
+              data-testid="button-create-daleel"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Create Daleel
+            </button>
           </div>
           
           {displayDaleels.length === 0 ? (

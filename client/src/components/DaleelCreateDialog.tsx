@@ -27,8 +27,9 @@ export default function DaleelCreateDialog({
   const [description, setDescription] = useState("");
 
   const handleCreate = () => {
-    if (name.trim() && categoryId) {
-      addDaleel(name.trim(), description.trim(), categoryId);
+    if (name.trim()) {
+      const targetCategoryId = categoryId === "all" ? "general" : categoryId;
+      addDaleel(name.trim(), description.trim(), targetCategoryId);
       setName("");
       setDescription("");
       onOpenChange(false);

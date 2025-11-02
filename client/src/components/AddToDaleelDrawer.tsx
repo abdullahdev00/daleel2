@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { X, Plus, FolderOpen, ChevronRight } from "lucide-react";
 import { useDaleel } from "@/contexts/DaleelContext";
@@ -26,7 +26,7 @@ export default function AddToDaleelDrawer({
   item,
 }: AddToDaleelDrawerProps) {
   const { categories, daleels, addItem, addCategory, addDaleel, getDaleelsByCategory } = useDaleel();
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedDaleel, setSelectedDaleel] = useState<string>("");
   const [showNewCategory, setShowNewCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
@@ -37,7 +37,19 @@ export default function AddToDaleelDrawer({
 
   const colors = ["#5A7A6B", "#C9A96E", "#3D5556", "#8B7355", "#4A6A5B"];
 
-  const categoryDaleels = selectedCategory ? getDaleelsByCategory(selectedCategory) : [];
+  const categoryDaleels = selectedCategory === "all" ? daleels : selectedCategory ? getDaleelsByCategory(selectedCategory) : [];
+
+  useEffect(() => {
+    if (open) {
+      setSelectedCategory("all");
+      setSelectedDaleel("");
+      setShowNewCategory(false);
+      setShowNewDaleel(false);
+      setNewCategoryName("");
+      setNewDaleelName("");
+      setNewDaleelDescription("");
+    }
+  }, [open]);
 
   const handleSave = () => {
     if (selectedDaleel) {
@@ -46,7 +58,7 @@ export default function AddToDaleelDrawer({
         daleelId: selectedDaleel,
       });
       onOpenChange(false);
-      setSelectedCategory("");
+      setSelectedCategory("all");
       setSelectedDaleel("");
     }
   };
@@ -62,7 +74,8 @@ export default function AddToDaleelDrawer({
 
   const handleCreateDaleel = () => {
     if (newDaleelName.trim() && selectedCategory) {
-      addDaleel(newDaleelName.trim(), newDaleelDescription.trim(), selectedCategory);
+      const targetCategoryId = selectedCategory === "all" ? "general" : selectedCategory;
+      addDaleel(newDaleelName.trim(), newDaleelDescription.trim(), targetCategoryId);
       setNewDaleelName("");
       setNewDaleelDescription("");
       setShowNewDaleel(false);
@@ -96,12 +109,25 @@ export default function AddToDaleelDrawer({
           </DrawerClose>
         </DrawerHeader>
 
-        <div className="px-4 pt-4 pb-6 space-y-6 overflow-y-auto flex-1 min-h-0">
+        <div className="px-4 pt-6 pb-6 space-y-6 overflow-y-auto flex-1 min-h-0">
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-3">Step 1: Select Category</h3>
             <div className="overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               <style>{`.overflow-x-auto::-webkit-scrollbar { display: none; }`}</style>
               <div className="flex gap-2 min-w-max">
+                <button
+                  onClick={() => {
+                    setSelectedCategory("all");
+                    setSelectedDaleel("");
+                  }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+                    selectedCategory === "all"
+                      ? "bg-primary text-primary-foreground ring-2 ring-offset-2 ring-primary"
+                      : "bg-muted hover:bg-muted/80 text-foreground"
+                  }`}
+                >
+                  All
+                </button>
                 {categories.map((category) => (
                   <button
                     key={category.id}
