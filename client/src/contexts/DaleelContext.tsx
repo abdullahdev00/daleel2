@@ -9,33 +9,47 @@ export interface DaleelItem {
   book?: string;
   arabicText: string;
   translation: string;
-  categoryId: string;
+  daleelId: string;
   addedAt: Date;
+}
+
+export interface Daleel {
+  id: string;
+  name: string;
+  description: string;
+  categoryId: string;
+  itemCount: number;
+  createdAt: Date;
 }
 
 export interface DaleelCategory {
   id: string;
   name: string;
   color: string;
-  itemCount: number;
+  daleelCount: number;
 }
 
 interface DaleelContextType {
   categories: DaleelCategory[];
+  daleels: Daleel[];
   items: DaleelItem[];
   addCategory: (name: string, color: string) => void;
   deleteCategory: (id: string) => void;
+  addDaleel: (name: string, description: string, categoryId: string) => void;
+  deleteDaleel: (id: string) => void;
+  getDaleelsByCategory: (categoryId: string) => Daleel[];
   addItem: (item: Omit<DaleelItem, "id" | "addedAt">) => void;
   removeItem: (id: string) => void;
+  getItemsByDaleel: (daleelId: string) => DaleelItem[];
   getItemsByCategory: (categoryId: string) => DaleelItem[];
 }
 
 const DaleelContext = createContext<DaleelContextType | undefined>(undefined);
 
 const DEFAULT_CATEGORIES: DaleelCategory[] = [
-  { id: "general", name: "General", color: "#5A7A6B", itemCount: 0 },
-  { id: "favorites", name: "Favorites", color: "#C9A96E", itemCount: 0 },
-  { id: "study", name: "Study", color: "#3D5556", itemCount: 0 },
+  { id: "general", name: "General", color: "#5A7A6B", daleelCount: 0 },
+  { id: "favorites", name: "Favorites", color: "#C9A96E", daleelCount: 0 },
+  { id: "study", name: "Study", color: "#3D5556", daleelCount: 0 },
 ];
 
 export function DaleelProvider({ children }: { children: ReactNode }) {
@@ -49,6 +63,22 @@ export function DaleelProvider({ children }: { children: ReactNode }) {
       }
     }
     return DEFAULT_CATEGORIES;
+  });
+
+  const [daleels, setDaleels] = useState<Daleel[]>(() => {
+    const stored = localStorage.getItem("daleel-collections");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return parsed.map((daleel: any) => ({
+          ...daleel,
+          createdAt: new Date(daleel.createdAt),
+        }));
+      } catch {
+        return [];
+      }
+    }
+    return [];
   });
 
   const [items, setItems] = useState<DaleelItem[]>(() => {
@@ -72,6 +102,10 @@ export function DaleelProvider({ children }: { children: ReactNode }) {
   }, [categories]);
 
   useEffect(() => {
+    localStorage.setItem("daleel-collections", JSON.stringify(daleels));
+  }, [daleels]);
+
+  useEffect(() => {
     localStorage.setItem("daleel-items", JSON.stringify(items));
   }, [items]);
 
@@ -80,14 +114,58 @@ export function DaleelProvider({ children }: { children: ReactNode }) {
       id: Date.now().toString(),
       name,
       color,
-      itemCount: 0,
+      daleelCount: 0,
     };
     setCategories((prev) => [...prev, newCategory]);
   };
 
   const deleteCategory = (id: string) => {
+    const categoryDaleels = daleels.filter((d) => d.categoryId === id);
+    const daleelIds = categoryDaleels.map((d) => d.id);
+    
     setCategories((prev) => prev.filter((cat) => cat.id !== id));
-    setItems((prev) => prev.filter((item) => item.categoryId !== id));
+    setDaleels((prev) => prev.filter((d) => d.categoryId !== id));
+    setItems((prev) => prev.filter((item) => !daleelIds.includes(item.daleelId)));
+  };
+
+  const addDaleel = (name: string, description: string, categoryId: string) => {
+    const newDaleel: Daleel = {
+      id: Date.now().toString(),
+      name,
+      description,
+      categoryId,
+      itemCount: 0,
+      createdAt: new Date(),
+    };
+    setDaleels((prev) => [...prev, newDaleel]);
+    
+    setCategories((prev) =>
+      prev.map((cat) =>
+        cat.id === categoryId
+          ? { ...cat, daleelCount: cat.daleelCount + 1 }
+          : cat
+      )
+    );
+  };
+
+  const deleteDaleel = (id: string) => {
+    const daleel = daleels.find((d) => d.id === id);
+    if (daleel) {
+      setDaleels((prev) => prev.filter((d) => d.id !== id));
+      setItems((prev) => prev.filter((item) => item.daleelId !== id));
+      
+      setCategories((prev) =>
+        prev.map((cat) =>
+          cat.id === daleel.categoryId
+            ? { ...cat, daleelCount: Math.max(0, cat.daleelCount - 1) }
+            : cat
+        )
+      );
+    }
+  };
+
+  const getDaleelsByCategory = (categoryId: string) => {
+    return daleels.filter((daleel) => daleel.categoryId === categoryId);
   };
 
   const addItem = (item: Omit<DaleelItem, "id" | "addedAt">) => {
@@ -98,11 +176,11 @@ export function DaleelProvider({ children }: { children: ReactNode }) {
     };
     setItems((prev) => [...prev, newItem]);
     
-    setCategories((prev) =>
-      prev.map((cat) =>
-        cat.id === item.categoryId
-          ? { ...cat, itemCount: cat.itemCount + 1 }
-          : cat
+    setDaleels((prev) =>
+      prev.map((daleel) =>
+        daleel.id === item.daleelId
+          ? { ...daleel, itemCount: daleel.itemCount + 1 }
+          : daleel
       )
     );
   };
@@ -111,32 +189,44 @@ export function DaleelProvider({ children }: { children: ReactNode }) {
     const item = items.find((i) => i.id === id);
     if (item) {
       setItems((prev) => prev.filter((i) => i.id !== id));
-      setCategories((prev) =>
-        prev.map((cat) =>
-          cat.id === item.categoryId
-            ? { ...cat, itemCount: Math.max(0, cat.itemCount - 1) }
-            : cat
+      setDaleels((prev) =>
+        prev.map((daleel) =>
+          daleel.id === item.daleelId
+            ? { ...daleel, itemCount: Math.max(0, daleel.itemCount - 1) }
+            : daleel
         )
       );
     }
+  };
+
+  const getItemsByDaleel = (daleelId: string) => {
+    return items.filter((item) => item.daleelId === daleelId);
   };
 
   const getItemsByCategory = (categoryId: string) => {
     if (categoryId === "all") {
       return items;
     }
-    return items.filter((item) => item.categoryId === categoryId);
+    const categoryDaleelIds = daleels
+      .filter((d) => d.categoryId === categoryId)
+      .map((d) => d.id);
+    return items.filter((item) => categoryDaleelIds.includes(item.daleelId));
   };
 
   return (
     <DaleelContext.Provider
       value={{
         categories,
+        daleels,
         items,
         addCategory,
         deleteCategory,
+        addDaleel,
+        deleteDaleel,
+        getDaleelsByCategory,
         addItem,
         removeItem,
+        getItemsByDaleel,
         getItemsByCategory,
       }}
     >
