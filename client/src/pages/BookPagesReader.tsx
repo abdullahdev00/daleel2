@@ -5,6 +5,47 @@ import { useQuery } from "@tanstack/react-query";
 import type { Book, BookPage } from "@shared/schema";
 import { useState, useRef, useEffect } from "react";
 
+const PageScaleWrapper = ({ children }: { children: React.ReactNode }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const pageWidthInPixels = 210 * 3.7795275591; // 210mm to pixels (1mm = 3.7795275591px)
+        const calculatedScale = Math.min(containerWidth / pageWidthInPixels, 1);
+        setScale(calculatedScale);
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
+
+  const pageHeightInPixels = 297 * 3.7795275591; // 297mm to pixels
+
+  return (
+    <div 
+      ref={containerRef} 
+      className="w-full flex justify-center"
+      style={{
+        height: `${pageHeightInPixels * scale}px`,
+      }}
+    >
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: 'top center',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
 export default function BookPagesReader() {
   const { bookId } = useParams();
   const [, setLocation] = useLocation();
@@ -130,7 +171,7 @@ export default function BookPagesReader() {
           id="book-main-content"
           className="flex-1 overflow-y-auto custom-scrollbar bg-muted/30"
         >
-          <div className="py-8 px-4 space-y-8 flex flex-col items-center">
+          <div className="py-8 px-4 space-y-8">
             {pages && pages.length > 0 ? (
               pages.map((page) => (
                 <div
@@ -138,12 +179,14 @@ export default function BookPagesReader() {
                   ref={(el) => (pageRefs.current[page.pageNumber] = el)}
                   data-testid={`page-container-${page.pageNumber}`}
                 >
-                  <PageCard
-                    pageNumber={page.pageNumber}
-                    content={page.content}
-                    bookTitle={book.title}
-                    chapterName="Chapter 1" // TODO: Add chapter info to backend
-                  />
+                  <PageScaleWrapper>
+                    <PageCard
+                      pageNumber={page.pageNumber}
+                      content={page.content}
+                      bookTitle={book.title}
+                      chapterName="Chapter 1"
+                    />
+                  </PageScaleWrapper>
                 </div>
               ))
             ) : (
