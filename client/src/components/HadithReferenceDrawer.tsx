@@ -33,16 +33,16 @@ export default function HadithReferenceDrawer({
 }: HadithReferenceDrawerProps) {
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]">
-        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border pb-4">
+      <DrawerContent className="max-h-[85vh]" onDoubleClick={() => onOpenChange(false)}>
+        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border pb-4 pt-4">
           <DrawerTitle className="text-xl font-semibold">
             Reference Details
           </DrawerTitle>
           <DrawerClose asChild>
             <button
-              className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
+              className="w-12 h-12 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6" />
             </button>
           </DrawerClose>
         </DrawerHeader>
