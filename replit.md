@@ -4,6 +4,16 @@
 
 Al-Kutub is a comprehensive Islamic knowledge platform that provides access to Quranic verses, authentic Hadiths, and Islamic scholarly books. The application features a modern, Nusuk-inspired dark theme interface with bilingual support (Arabic/English) and includes prayer time tracking functionality. Users can browse and read Islamic literature across multiple categories including Tafseer (Quranic exegesis), Hadith collections, Fiqh (Islamic jurisprudence), and Seerah (biographical writings about Prophet Muhammad).
 
+## Recent Changes
+
+**November 2, 2025 - Daleel Page & Add to Daleel Drawer Improvements**
+- Fixed "All" category button styling on Daleel page to show white ring border when selected (consistent with other category buttons)
+- Added "Create Daleel" button visibility when "All" category is selected - new daleels are automatically created in the "General" category
+- Added "All" option to the Add to Daleel bottom sheet that shows all daleels from all categories
+- Fixed bottom sheet padding (pt-6) to prevent category buttons from being cut off at the top
+- Implemented automatic state reset in Add to Daleel drawer - always opens with "All" selected by default
+- Ensured all daleels created from "All" view are assigned to "General" category to prevent orphaned records
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
