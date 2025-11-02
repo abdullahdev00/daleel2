@@ -1,6 +1,6 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { useQuranSettings } from "@/contexts/QuranSettingsContext";
 
 interface QuranSettingsSheetProps {
@@ -19,9 +19,14 @@ export default function QuranSettingsSheet({ open, onOpenChange }: QuranSettings
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-md">
-        <SheetHeader>
-          <SheetTitle data-testid="title-settings">Quran Reading Settings</SheetTitle>
+      <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader className="flex flex-row items-center justify-between">
+          <SheetTitle data-testid="title-settings">Quran Settings</SheetTitle>
+          <SheetClose asChild>
+            <button className="w-8 h-8 rounded-lg hover:bg-accent flex items-center justify-center transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </SheetClose>
         </SheetHeader>
 
         <div className="mt-8 space-y-8">
@@ -62,13 +67,6 @@ export default function QuranSettingsSheet({ open, onOpenChange }: QuranSettings
               </Button>
             </div>
 
-            <div 
-              className="font-arabic text-center p-4 bg-card rounded-xl border border-card-border"
-              style={{ fontSize: `${settings.arabicFontSize}px` }}
-              dir="rtl"
-            >
-              بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-            </div>
           </div>
 
           <div className="space-y-4">
@@ -107,12 +105,27 @@ export default function QuranSettingsSheet({ open, onOpenChange }: QuranSettings
                 <Plus className="w-4 h-4" />
               </Button>
             </div>
+          </div>
 
-            <div 
-              className="text-center p-4 bg-card rounded-xl border border-card-border"
-              style={{ fontSize: `${settings.translationFontSize}px` }}
-            >
-              In the name of Allah, the Most Gracious, the Most Merciful
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-foreground">Live Preview</h3>
+            <div className="p-5 bg-card rounded-xl border border-card-border space-y-5">
+              <p 
+                className="font-arabic text-right leading-loose"
+                style={{ fontSize: `${settings.arabicFontSize}px` }}
+                dir="rtl"
+              >
+                بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+              </p>
+              
+              <div className="w-full h-px bg-border" />
+              
+              <p 
+                className="text-foreground leading-relaxed"
+                style={{ fontSize: `${settings.translationFontSize}px` }}
+              >
+                In the name of Allah, the Most Gracious, the Most Merciful
+              </p>
             </div>
           </div>
         </div>

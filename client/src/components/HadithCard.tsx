@@ -47,33 +47,45 @@ export default function HadithCard({
         className="bg-card border border-border rounded-2xl overflow-hidden hover-elevate transition-all"
         data-testid={`hadith-card-${hadithNumber}`}
       >
-        <div className="flex items-center gap-2 p-3 border-b border-border bg-muted/30">
-          <button
-            onClick={() => setTranslationOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-background hover:bg-accent transition-colors"
-          >
-            <Languages className="w-4 h-4" />
-            <span className="text-sm font-medium">Translation</span>
-          </button>
-          <button
-            onClick={() => setCommentaryOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-background hover:bg-accent transition-colors"
-          >
-            <BookText className="w-4 h-4" />
-            <span className="text-sm font-medium">Sharah</span>
-          </button>
+        <div className="flex items-center justify-between p-5 pb-0">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setTranslationOpen(true)}
+              className="flex items-center gap-1.5 px-4 h-9 rounded-full border border-border bg-background hover:bg-accent transition-colors text-sm font-medium"
+            >
+              <Languages className="w-3.5 h-3.5" />
+              Translation
+            </button>
+            <button
+              onClick={() => setCommentaryOpen(true)}
+              className="flex items-center gap-1.5 px-4 h-9 rounded-full border border-border bg-background hover:bg-accent transition-colors text-sm font-medium"
+            >
+              <BookText className="w-3.5 h-3.5" />
+              Sharah
+            </button>
+          </div>
+          
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/20">
+            <span className="text-sm font-semibold text-primary">
+              #{hadithNumber}
+            </span>
+          </div>
         </div>
         
-        <div className="p-5 space-y-4">
+        <div className="p-5 pt-6 space-y-5">
           {settings.showArabic && (
             <p 
-              className="font-arabic leading-loose text-right border-b border-border pb-4"
+              className="font-arabic leading-loose text-right"
               style={{ fontSize: `${settings.arabicFontSize}px` }}
               dir="rtl"
               data-testid="text-arabic"
             >
               {arabicText}
             </p>
+          )}
+          
+          {settings.showArabic && settings.showTranslation && (
+            <div className="w-full h-px bg-border" />
           )}
           
           {settings.showTranslation && (
