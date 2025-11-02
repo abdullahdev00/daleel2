@@ -1,5 +1,6 @@
-import { Home, BookOpen, Settings, Menu } from "lucide-react";
+import { Home, BookOpen, Settings, Menu, Bookmark } from "lucide-react";
 import { useLocation } from "wouter";
+import { useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +23,11 @@ const navItems = [
     path: "/library",
   },
   {
+    title: "Daleel",
+    icon: Bookmark,
+    path: "/daleel",
+  },
+  {
     title: "Settings",
     icon: Settings,
     path: "/settings",
@@ -30,9 +36,29 @@ const navItems = [
 
 export function AppSidebar() {
   const [location, setLocation] = useLocation();
+  const [lastClickTime, setLastClickTime] = useState(0);
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) {
+      return;
+    }
+
+    const now = Date.now();
+    if (now - lastClickTime < 300) {
+      const sidebar = document.querySelector('[data-sidebar="sidebar"]');
+      if (sidebar) {
+        const closeButton = sidebar.querySelector('[data-sidebar="close"]');
+        if (closeButton instanceof HTMLElement) {
+          closeButton.click();
+        }
+      }
+    }
+    setLastClickTime(now);
+  };
 
   return (
-    <Sidebar className="border-r border-border bg-background">
+    <Sidebar className="border-r border-border bg-background" onClick={handleDoubleClick}>
       <SidebarContent className="p-0">
         <div className="px-3 py-4 border-b border-border">
           <button className="w-10 h-10 rounded-lg hover:bg-accent flex items-center justify-center transition-colors">

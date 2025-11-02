@@ -20,13 +20,8 @@ export default function QuranSettingsSheet({ open, onOpenChange }: QuranSettings
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
-        <SheetHeader className="flex flex-row items-center justify-between">
+        <SheetHeader>
           <SheetTitle data-testid="title-settings">Quran Settings</SheetTitle>
-          <SheetClose asChild>
-            <button className="w-8 h-8 rounded-lg hover:bg-accent flex items-center justify-center transition-colors">
-              <X className="w-5 h-5" />
-            </button>
-          </SheetClose>
         </SheetHeader>
 
         <div className="mt-8 space-y-8">

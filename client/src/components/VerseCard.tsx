@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import TranslationDrawer from "./TranslationDrawer";
 import TafseerDrawer from "./TafseerDrawer";
+import AddToDaleelDrawer from "./AddToDaleelDrawer";
 import { useQuranSettings } from "@/contexts/QuranSettingsContext";
 
 interface VerseCardProps {
@@ -19,6 +21,7 @@ export default function VerseCard({
 }: VerseCardProps) {
   const [translationOpen, setTranslationOpen] = useState(false);
   const [tafseerOpen, setTafseerOpen] = useState(false);
+  const [daleelOpen, setDaleelOpen] = useState(false);
   const { settings } = useQuranSettings();
 
   return (
@@ -46,6 +49,15 @@ export default function VerseCard({
               data-testid={`button-tafseer-${verseNumber}`}
             >
               Tafseer
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full w-9 h-9 p-0"
+              onClick={() => setDaleelOpen(true)}
+              data-testid={`button-add-daleel-${verseNumber}`}
+            >
+              <Plus className="w-4 h-4" />
             </Button>
           </div>
           
@@ -91,6 +103,18 @@ export default function VerseCard({
         onOpenChange={setTafseerOpen}
         verseNumber={verseNumber}
         surahNumber={surahNumber}
+      />
+
+      <AddToDaleelDrawer
+        open={daleelOpen}
+        onOpenChange={setDaleelOpen}
+        item={{
+          type: "verse",
+          surahNumber,
+          verseNumber,
+          arabicText,
+          translation,
+        }}
       />
     </>
   );

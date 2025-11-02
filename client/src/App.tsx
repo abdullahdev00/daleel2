@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { QuranSettingsProvider } from "@/contexts/QuranSettingsContext";
 import { HadithSettingsProvider } from "@/contexts/HadithSettingsContext";
+import { DaleelProvider } from "@/contexts/DaleelContext";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -17,6 +18,7 @@ import HadithBooksList from "@/pages/HadithBooksList";
 import HadithReader from "@/pages/HadithReader";
 import BooksLibrary from "@/pages/BooksLibrary";
 import BookPagesReader from "@/pages/BookPagesReader";
+import Daleel from "@/pages/Daleel";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 
@@ -31,6 +33,7 @@ function Router() {
       <Route path="/library/hadith/:bookId" component={HadithReader} />
       <Route path="/library/books" component={BooksLibrary} />
       <Route path="/library/books/:bookId" component={BookPagesReader} />
+      <Route path="/daleel" component={Daleel} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
@@ -48,22 +51,24 @@ function App() {
       <ThemeProvider>
         <QuranSettingsProvider>
           <HadithSettingsProvider>
-            <TooltipProvider>
-              <SidebarProvider style={style as React.CSSProperties}>
-                <div className="flex h-screen w-full">
-                  <div className="hidden lg:block">
-                    <AppSidebar />
+            <DaleelProvider>
+              <TooltipProvider>
+                <SidebarProvider style={style as React.CSSProperties}>
+                  <div className="flex h-screen w-full">
+                    <div className="hidden lg:block">
+                      <AppSidebar />
+                    </div>
+                    <main className="flex-1 overflow-auto">
+                      <Router />
+                    </main>
+                    <div className="lg:hidden">
+                      <BottomNavigation />
+                    </div>
                   </div>
-                  <main className="flex-1 overflow-auto">
-                    <Router />
-                  </main>
-                  <div className="lg:hidden">
-                    <BottomNavigation />
-                  </div>
-                </div>
-              </SidebarProvider>
-              <Toaster />
-            </TooltipProvider>
+                </SidebarProvider>
+                <Toaster />
+              </TooltipProvider>
+            </DaleelProvider>
           </HadithSettingsProvider>
         </QuranSettingsProvider>
       </ThemeProvider>

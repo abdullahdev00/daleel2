@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Languages, BookText, Info } from "lucide-react";
+import { Languages, BookText, Info, Plus } from "lucide-react";
 import { useHadithSettings } from "@/contexts/HadithSettingsContext";
 import HadithCommentaryDrawer from "./HadithCommentaryDrawer";
 import HadithReferenceDrawer from "./HadithReferenceDrawer";
 import TranslationDrawer from "./TranslationDrawer";
+import AddToDaleelDrawer from "./AddToDaleelDrawer";
 
 interface HadithCardProps {
   hadithNumber: number;
@@ -40,6 +41,7 @@ export default function HadithCard({
   const [translationOpen, setTranslationOpen] = useState(false);
   const [commentaryOpen, setCommentaryOpen] = useState(false);
   const [referenceOpen, setReferenceOpen] = useState(false);
+  const [daleelOpen, setDaleelOpen] = useState(false);
 
   return (
     <>
@@ -62,6 +64,12 @@ export default function HadithCard({
             >
               <BookText className="w-3.5 h-3.5" />
               Sharah
+            </button>
+            <button
+              onClick={() => setDaleelOpen(true)}
+              className="flex items-center justify-center w-9 h-9 rounded-full border border-border bg-background hover:bg-accent transition-colors"
+            >
+              <Plus className="w-4 h-4" />
             </button>
           </div>
           
@@ -152,6 +160,18 @@ export default function HadithCard({
         statusRef={statusRef}
         narrator={narrator}
         explanation={explanation}
+      />
+
+      <AddToDaleelDrawer
+        open={daleelOpen}
+        onOpenChange={setDaleelOpen}
+        item={{
+          type: "hadith",
+          hadithNumber,
+          book,
+          arabicText,
+          translation,
+        }}
       />
     </>
   );
