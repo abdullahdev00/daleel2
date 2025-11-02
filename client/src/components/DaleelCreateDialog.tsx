@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,9 @@ export default function DaleelCreateDialog({
           <DialogTitle className="text-xl font-semibold">
             Create New Daleel
           </DialogTitle>
+          <DialogDescription>
+            Create a new collection to organize your verses and hadiths
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 pt-4">
           <div className="space-y-2">
