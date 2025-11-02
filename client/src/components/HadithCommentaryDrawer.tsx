@@ -20,7 +20,7 @@ export default function HadithCommentaryDrawer({
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]" onDoubleClick={() => onOpenChange(false)}>
-        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border pb-4 pt-4">
+        <DrawerHeader className="flex flex-row items-center justify-between border-b border-border px-6 py-5">
           <DrawerTitle className="text-xl font-semibold">
             Commentary (Sharah)
           </DrawerTitle>
