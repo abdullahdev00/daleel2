@@ -15,7 +15,7 @@ export default function StatusBar({
 }: StatusBarProps) {
   return (
     <div 
-      className="sticky top-0 z-50 h-[60px] flex items-center justify-between px-4 border-b"
+      className="sticky top-0 z-50 h-16 flex items-center justify-between px-4 border-b"
       style={{ backgroundColor: 'rgba(44, 62, 63, 0.95)' }}
       data-testid="status-bar"
     >

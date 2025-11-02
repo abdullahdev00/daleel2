@@ -52,13 +52,11 @@ export default function Daleel() {
   return (
     <div className="min-h-screen bg-background lg:pb-0 pb-[70px]">
       <div className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="px-4 py-4">
-          <h1 className="text-2xl font-serif font-semibold text-foreground mb-4">
-            My Daleel
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Your saved verses and hadiths organized in collections
-          </p>
+        <div className="h-16 px-4 py-3 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-foreground">My Daleel</h1>
+            <p className="text-xs text-muted-foreground">Your saved verses and hadiths</p>
+          </div>
         </div>
       </div>
 

@@ -9,17 +9,17 @@ export default function Library() {
   return (
     <div className="min-h-screen bg-background lg:pb-0 pb-[70px]">
       <div className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="px-4 py-4">
-          <h1 className="text-2xl font-serif font-semibold text-foreground mb-4">
+        <div className="h-16 px-4 py-3 flex items-center">
+          <h1 className="text-2xl font-serif font-semibold text-foreground">
             Islamic Library
           </h1>
-          <SearchBar placeholder="Search books, verses, hadiths..." />
         </div>
       </div>
       
       <div className="px-4 py-6 space-y-6 max-w-7xl mx-auto">
         <div>
-          <h2 className="text-lg font-semibold text-foreground mb-4">Browse by Category</h2>
+          <SearchBar placeholder="Search books, verses, hadiths..." />
+          <h2 className="text-lg font-semibold text-foreground mb-4 mt-6">Browse by Category</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <CategoryCard
               title="Quran"
