@@ -6,6 +6,18 @@ Al-Kutub is a comprehensive Islamic knowledge platform that provides access to Q
 
 ## Recent Changes
 
+**November 2, 2025 - Book Reader: Add to Daleel, Settings & Lazy Loading**
+- Added "Add to Daleel" functionality for book pages with floating + button
+- Implemented book reader settings drawer with font size and page zoom controls
+- Added settings button in header that opens BookSettingsSheet
+- Created BookSettingsContext to manage reader preferences (font size, page zoom)
+- Lazy loading implemented for AddToDaleelDrawer and BookSettingsSheet to improve performance
+- Updated DaleelContext to support "page" type for saving book pages
+- Updated AddToDaleelDrawer to handle book page items alongside verses and hadiths
+- Font size and page zoom settings persist via localStorage across sessions
+- PageScaleWrapper now applies both responsive scaling and user's custom zoom setting
+- Cleaned up duplicate DESIGN_GUIDELINES.md file
+
 **November 2, 2025 - Book Reader Page Scaling Implementation**
 - Fixed all book pages to have consistent fixed dimensions (A4 size: 210mm × 297mm)
 - Implemented responsive scaling using CSS transform instead of text reflow
