@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { QuranSettingsProvider } from "@/contexts/QuranSettingsContext";
+import { HadithSettingsProvider } from "@/contexts/HadithSettingsContext";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import BottomNavigation from "@/components/BottomNavigation";
@@ -46,22 +47,24 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <QuranSettingsProvider>
-          <TooltipProvider>
-            <SidebarProvider style={style as React.CSSProperties}>
-              <div className="flex h-screen w-full">
-                <div className="hidden lg:block">
-                  <AppSidebar />
+          <HadithSettingsProvider>
+            <TooltipProvider>
+              <SidebarProvider style={style as React.CSSProperties}>
+                <div className="flex h-screen w-full">
+                  <div className="hidden lg:block">
+                    <AppSidebar />
+                  </div>
+                  <main className="flex-1 overflow-auto">
+                    <Router />
+                  </main>
+                  <div className="lg:hidden">
+                    <BottomNavigation />
+                  </div>
                 </div>
-                <main className="flex-1 overflow-auto">
-                  <Router />
-                </main>
-                <div className="lg:hidden">
-                  <BottomNavigation />
-                </div>
-              </div>
-            </SidebarProvider>
-            <Toaster />
-          </TooltipProvider>
+              </SidebarProvider>
+              <Toaster />
+            </TooltipProvider>
+          </HadithSettingsProvider>
         </QuranSettingsProvider>
       </ThemeProvider>
     </QueryClientProvider>

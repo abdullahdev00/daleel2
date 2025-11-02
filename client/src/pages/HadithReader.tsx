@@ -1,13 +1,15 @@
-import { useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Settings } from "lucide-react";
 import { useLocation, useParams } from "wouter";
 import HadithCard from "@/components/HadithCard";
+import HadithSettingsSheet from "@/components/HadithSettingsSheet";
 import { useQuery } from "@tanstack/react-query";
 import type { Hadith } from "@shared/schema";
 
 export default function HadithReader() {
   const [, setLocation] = useLocation();
   const params = useParams<{ bookId: string }>();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   
   let bookName = "";
   let isInvalid = false;
@@ -52,18 +54,28 @@ export default function HadithReader() {
   return (
     <div className="min-h-screen bg-background lg:pb-0 pb-[70px]">
       <div className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="px-4 py-4 flex items-center gap-3">
-          <button
-            onClick={() => setLocation("/library/hadith")}
-            className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
-            data-testid="button-back"
-          >
-            <ArrowLeft className="w-5 h-5 text-foreground" />
-          </button>
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">{bookName}</h1>
-            <p className="text-sm text-muted-foreground">Authentic Hadiths</p>
+        <div className="px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setLocation("/library/hadith")}
+              className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
+              data-testid="button-back"
+            >
+              <ArrowLeft className="w-5 h-5 text-foreground" />
+            </button>
+            <div>
+              <h1 className="text-xl font-semibold text-foreground">{bookName}</h1>
+              <p className="text-sm text-muted-foreground">Authentic Hadiths</p>
+            </div>
           </div>
+          
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="w-10 h-10 rounded-full hover-elevate active-elevate-2 flex items-center justify-center"
+            data-testid="button-settings"
+          >
+            <Settings className="w-5 h-5 text-foreground" />
+          </button>
         </div>
       </div>
       
@@ -80,6 +92,8 @@ export default function HadithReader() {
           />
         ))}
       </div>
+
+      <HadithSettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 }
